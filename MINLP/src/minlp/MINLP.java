@@ -24,12 +24,12 @@ public class MINLP extends IloCplex{
         // x in R   / [-4, +3] 
         IloNumVar x = cplex.numVar(-4, 3);
         // y in {0,1}
-        IloIntVar y = cplex.boolVar();
+        Int y = new Int(cplex, -5, 5);
         // v = x*y
-        IloNumVar v = cplex.addProd(x, y);
+        IloNumExpr v = y.addProd(x);
         
         //------------------[ tests fix some thing ]-----------------
-        x.setLB(-2);
+        x.setLB(-3);
         x.setUB(-2);
         cplex.addMinimize(v);
         
@@ -37,7 +37,7 @@ public class MINLP extends IloCplex{
             System.out.println("status = "+cplex.getStatus());
             System.out.println("objective = "+cplex.getObjValue());
             System.out.println("x = "+cplex.getValue(x));
-            System.out.println("y = "+cplex.getValue(y));
+            System.out.println("y = "+cplex.getValue(y.val));
             System.out.println("v = "+cplex.getValue(v));
         }else{
             System.out.println("status = "+cplex.getStatus());
@@ -66,7 +66,7 @@ public class MINLP extends IloCplex{
      *          v=0 
      *      }
      * linear transformation:
-     *      let v in R
+     *      let v &isin R
      *      M*(y-1) + x &le v &le x - M*(y-1)
      *      -M*y &le v &le M*y
      * </pre>
