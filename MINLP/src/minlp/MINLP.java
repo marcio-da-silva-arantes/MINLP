@@ -24,14 +24,14 @@ public class MINLP extends IloCplex{
         // x in R   / [-4, +3] 
         IloNumVar x = cplex.numVar(-4, 3);
         // y in {0,1}
-        Int y = new Int(cplex, -5, 5);
+        Cont y = new Cont(cplex, -5.5, 6.5, 10);
         // v = x*y
         IloNumExpr v = y.addProd(x);
         
         //------------------[ tests fix some thing ]-----------------
         x.setLB(-3);
-        x.setUB(-2);
-        cplex.addMinimize(v);
+        x.setUB(+2);
+        cplex.addMaximize(v);
         
         if(cplex.solve()){
             System.out.println("status = "+cplex.getStatus());
