@@ -10,6 +10,7 @@ import ilog.concert.IloIntVar;
 import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
+import java.util.LinkedList;
 
 /**
  *
@@ -18,33 +19,6 @@ import ilog.cplex.IloCplex;
 public class MINLP extends IloCplex{
     private static final double M = 1e6;    //big M
 
-    public static void main(String[] args) throws IloException {
-        // TODO code application logic here
-        MINLP cplex = new MINLP();
-        // x in R   / [-4, +3] 
-        IloNumVar x = cplex.numVar(-4, 3);
-        // y in {0,1}
-        Cont y = new Cont(cplex, -5.5, 6.5, 10);
-        // v = x*y
-        IloNumExpr v = y.addProd(x);
-        
-        //------------------[ tests fix some thing ]-----------------
-        x.setLB(-3);
-        x.setUB(+2);
-        cplex.addMaximize(v);
-        
-        if(cplex.solve()){
-            System.out.println("status = "+cplex.getStatus());
-            System.out.println("objective = "+cplex.getObjValue());
-            System.out.println("x = "+cplex.getValue(x));
-            System.out.println("y = "+cplex.getValue(y.val));
-            System.out.println("v = "+cplex.getValue(v));
-        }else{
-            System.out.println("status = "+cplex.getStatus());
-        }
-    }
-    
-    
     public MINLP() throws IloException {
     }
     /**
@@ -54,6 +28,16 @@ public class MINLP extends IloCplex{
      */
     public IloNumVar numVar() throws IloException{
         return numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
+    
+    /**
+     * creates a array of new continuous variables with default bounds.<br>[lb,ub] &harr [0,+&#8734]
+     * @param s
+     * @return
+     * @throws IloException 
+     */
+    public IloNumVar[] numVarArrayPos(Set s) throws IloException{
+        return numVarArray(s.size(), 0, Double.POSITIVE_INFINITY);
     }
     
     /**<pre>
@@ -89,5 +73,75 @@ public class MINLP extends IloCplex{
         addGe(v, prod(-M,y));
         return v;
     }
+   
+    public Set<Integer> range(int n){
+        return range(0, n-1);
+    }
+    public Set<Integer> range(int begin, int end){
+        LinkedList<Integer> list = new LinkedList<>();
+        for(int i=begin; i<=end; i++){
+            list.addLast(i);
+        }
+        return new Set<>(this, list);
+    }
     
+    /*public <T> Stream forAll(Function<T, ?> mapper){
+        return set.stream().map((e) -> e);
+    }*/
+    /**
+     * <pre>
+     * Interpratation:
+     *      for all j in J {
+     *          //do something here
+     *      }
+     * Simtax:
+     *      cplex.forAll(J, (j)->{
+     *          //do something here
+     *      });
+     * Sample:
+     *      cplex.forAll(J, (j)->{
+     *          cplex.addGe(x[j], 1);
+     *      });
+     * </pre>
+     * @param <T> type of set index
+     * @param set set of indexes
+     * @param action the action to be performed
+     */
+    public <T> void forAll(Set<T> set, MINLPConsumer<? super T> action){
+        set.forAll(action);
+    }
+    /**
+     * <pre>
+     * Interpratation:
+     *      sum_{i in I}{expression}
+     * Simtax:
+     *      cplex.sum(I, i -> expression)
+     * Sample:
+     *      cplex.sum(I, i -> cplex.prod(C[i],x[i]))
+     * </pre>
+     * @param <T>
+     * @param set
+     * @param mapper
+     * @return 
+     */
+    public <T> IloNumExpr sum(Set<T> set, MINLPFunction<? super T, IloNumExpr> mapper){
+        return set.sum(mapper);
+    }
+    /**
+     * <pre>
+     * Interpratation:
+     *      sum_{i=start to end}{expression}
+     * Simtax:
+     *      cplex.sum(start, end, i -> expression)
+     * Sample:
+     *      cplex.sum(0, 5, i -> cplex.prod(C[i],x[i]))
+     * </pre>
+     * @param start
+     * @param end
+     * @param mapper
+     * @return 
+     */
+    public IloNumExpr sum(int start, int end, MINLPFunction<Integer, IloNumExpr> mapper){
+        return range(start, end).sum(mapper);
+    }
 }
