@@ -1,12 +1,12 @@
 # MINLP
 IBM ILOG CPLEX solver extension for Mixed Integer Nonlinear Programming (MINLP) in Java
 
-#### addProd(x,y)
+#### Main idea of how it is done
 <pre>
 define:
   let x ∈ R
   let y ∈ {0,1}
-  v = addProd(x,y)  ↔ v = x*y
+  v = cplex.addProd(x,y)  ↔ v = x*y
 dedution: 
   if(y=1){
     v=x
@@ -19,7 +19,7 @@ linear transformation:
   -M*y ≤ v ≤ M*y
 </pre>
 
-#### General encoding
+#### General easy encoding
 * <math>&sum;<sub>i&in;I</sub> ( x<sub>i</sub> )</math>
 ```javascript
 	cplex.sum(I, i -> x[i])
@@ -44,7 +44,7 @@ linear transformation:
 	});
 ```
 
-#### A more easy way to encode (sample of mixture problem)
+#### A easy way to encode (sample of mixture problem)
 
 ```javascript
 MINLP cplex = new MINLP();
