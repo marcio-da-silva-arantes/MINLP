@@ -19,8 +19,34 @@ linear transformation:
   -M*y ≤ v ≤ M*y
 </pre>
 
+#### General encoding
+* <math>&sum;<sub>i&in;I</sub> ( x<sub>i</sub> )</math>
+```javascript
+	cplex.sum(I, i -> x[i])
+```
+
+* <math>&sum;<sub>i&in;I</sub> &sum;<sub>j&in;J</sub> ( C<sub>ij</sub> x<sub>ij</sub> ) </math>
+```javascript
+	cplex.sum(I, i -> cplex.sum(J, j -> cplex.prod(C[i][j], x[i][j]))) )
+```
+
+* <math> x<sub>i</sub> &le; b<sub>i</sub> 	&forall;(i&in;I)</math>
+```javascript
+	cplex.forAll(I, (i)->{
+		cplex.addLe(x[i], b[i]);
+	});
+```
+
+* <math>&sum;<sub>i&in;I</sub> ( A<sub>ji</sub> x<sub>i</sub> ) &ge; B<sub>j</sub>	&forall;(j&in;J)</math>
+```javascript
+	cplex.forAll(J, (j)->{
+		cplex.addGe(cplex.sum(I, i -> cplex.prod(A[j][i], x[i])), B[j]);
+	});
+```
+
 #### A more easy way to encode (sample of mixture problem)
-<pre>
+
+```javascript
 MINLP cplex = new MINLP();
         
 //conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
@@ -66,4 +92,5 @@ if(cplex.solve()){
 }else{
 	System.out.println(cplex.getStatus());
 }
-</pre>
+```
+
