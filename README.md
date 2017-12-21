@@ -1,5 +1,6 @@
 # MINLP
-IBM ILOG CPLEX solver extension for Mixed Integer Nonlinear Programming (MINLP) in Java
+IBM ILOG CPLEX solver extension for Mixed Integer Nonlinear Programming (MINLP) in Java. 
+Easy donwload here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
 
 #### Main idea of how it is done
 <pre>
