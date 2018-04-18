@@ -14,12 +14,12 @@ import ilog.concert.IloNumVar;
  *
  * @author marcio
  */
-public class Cont {
+public class Cont2 {
     public final IloIntVar[] y;
-    private final double lb, precision;
-    public final IloNumExpr val;
+    private final double lb,precision;
+    public final IloNumVar val;
     private final MINLP cplex;
-    public Cont(MINLP cplex, double lb, double ub, int size) throws IloException {
+    public Cont2(MINLP cplex, double lb, double ub, int size) throws IloException {
         this.cplex = cplex;
         this.lb = lb;
         this.precision = (ub-lb)/(Math.pow(2, size)-1);
@@ -33,7 +33,8 @@ public class Cont {
             sum = cplex.sum(sum, cplex.prod(base*precision, yi));
             base *= 2;
         }
-        this.val = sum;
+        this.val = cplex.numVar();
+        cplex.addEq(val, sum);
     }
     public IloNumExpr addProd(IloNumExpr x) throws IloException{
         IloNumExpr sum = cplex.prod(lb, x);

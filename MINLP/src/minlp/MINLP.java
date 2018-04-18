@@ -17,9 +17,13 @@ import java.util.LinkedList;
  * @author marcio
  */
 public class MINLP extends IloCplex{
-    private static final double M = 1e6;    //big M
+    private final double M;    //big M
 
     public MINLP() throws IloException {
+        this(1e6);
+    }
+    public MINLP(double bigM) throws IloException {
+        this.M = bigM;
     }
     /**
      * create a new continuous variable with default bounds.<br>[lb,ub] &harr [-&#8734,+&#8734]
@@ -40,6 +44,8 @@ public class MINLP extends IloCplex{
         return numVarArray(s.size(), 0, Double.POSITIVE_INFINITY);
     }
     
+    
+    private int count_v = 0;
     /**<pre>
      * define: 
      *      v = addProd(x,y)  &harr v = x*y
@@ -62,7 +68,8 @@ public class MINLP extends IloCplex{
         if(y.getMax()>1 || y.getMin()<0){
             throw new IloException("y must be boolean but has interval lb="+y.getMin()+" , ub="+y.getMax()); 
         }
-        IloNumVar v = numVar();
+        IloNumVar v = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, "v"+count_v);
+        count_v++;
         //v <= x - M(y-1)
         addLe(v, sum(x,prod(-M,sum(y,-1))));
         //v >= x + M(y-1)
