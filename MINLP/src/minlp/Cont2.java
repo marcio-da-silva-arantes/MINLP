@@ -28,7 +28,7 @@ public class Cont2 {
             this.y[i] = cplex.boolVar("y"+i);
         }
         IloNumExpr sum = cplex.constant(lb);
-        int base = 1;
+        long base = 1;
         for (IloIntVar yi : y) {
             sum = cplex.sum(sum, cplex.prod(base*precision, yi));
             base *= 2;
@@ -38,7 +38,7 @@ public class Cont2 {
     }
     public IloNumExpr addProd(IloNumExpr x) throws IloException{
         IloNumExpr sum = cplex.prod(lb, x);
-        int base = 1;
+        long base = 1;
         for (IloIntVar yi : y) {
             IloNumVar vi = cplex.addProd(x, yi);
             sum = cplex.sum(sum, cplex.prod(base*precision, vi));

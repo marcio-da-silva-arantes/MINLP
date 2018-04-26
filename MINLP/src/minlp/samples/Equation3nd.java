@@ -34,7 +34,7 @@ public class Equation3nd {
         MINLP cplex = new MINLP(1e4);
         
         // x in R   / [-10, +10]    using 16 bits of precision
-        Cont2 var = new Cont2(cplex, -10, +10, 16);
+        Cont2 var = new Cont2(cplex, -10, +10, 32);
         
         IloNumExpr x1 = var.val;         //linear term: is directily the value of x
         IloNumExpr x2 = var.addProd(x1); //quadratic term: is the product of x to the linear term
@@ -48,8 +48,8 @@ public class Equation3nd {
         expr = cplex.sum(expr, cplex.prod(+1, x3));    //cubic term
         
         
-        cplex.addRange(-0.001, expr, 0.001);
-        //cplex.addEq(expr, 0);
+        //cplex.addRange(-0.01, expr, 0.01);
+        cplex.addEq(expr, 0);
         
         cplex.addMinimize(var.val);   //find the smaller x first
         
@@ -63,7 +63,7 @@ public class Equation3nd {
                 
                 System.out.printf("x%d = %1.2f  -> error = %g\n", i+1, val_x, cplex.getValue(expr));
                 
-                cplex.addGe(var.val, val_x+0.01);   //set to constrant to find next x
+                cplex.addGe(var.val, val_x+0.01);   //set to ignore this solution and find next x
             }else{
                 System.out.printf("x%d = ????  -> status = %s\n", i+1, cplex.getStatus());
             }
