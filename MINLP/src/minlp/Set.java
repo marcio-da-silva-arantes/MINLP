@@ -5,26 +5,25 @@
  */
 package minlp;
 
-import ilog.concert.IloException;
-import ilog.concert.IloNumExpr;
-import ilog.cplex.IloCplex;
-import java.util.LinkedList;
 
+import minlp.stream.Function;
+import minlp.stream.Consumer;
+import java.util.LinkedList;
 /**
  *
  * @author marcio
  */
-public class Set<T> {
-    private final IloCplex cplex;
-    protected final LinkedList<T> set;
-    public Set(IloCplex cplex, LinkedList<T> set) {
-        this.cplex = cplex;
+public class Set {
+    private final MINLP mip;
+    protected final LinkedList<Integer> set;
+    public Set(MINLP mip, LinkedList<Integer> set) {
+        this.mip = mip;
         this.set = set;
     }
-    public Set(IloCplex cplex, T ...array) {
-        this.cplex = cplex;
+    public Set(MINLP cplex, Integer ...array) {
+        this.mip = cplex;
         this.set = new LinkedList<>();
-        for(T e: array){
+        for(Integer e: array){
             this.set.add(e);
         }
     }
@@ -35,7 +34,7 @@ public class Set<T> {
     /*public void forAll(Consumer<? super T> action){
         set.stream().forEach(action);
     }*/
-    public void forAll(MINLPConsumer<? super T> action){
+    public void forAll(Consumer action){
         set.stream().forEach((e)->{
             try {
                 action.accept(e);
@@ -44,7 +43,7 @@ public class Set<T> {
             }
         });
     }
-    public IloNumExpr sum(final MINLPFunction<? super T, IloNumExpr> mapper){
+    public Expr sum(final Function mapper){
         return set.stream().map((e)->{
             try {
                 return mapper.accept(e);
@@ -54,8 +53,8 @@ public class Set<T> {
             }
         }).reduce(null, (r, e) -> {
             try {
-                return r==null ? e : cplex.sum(r,e);
-            } catch (IloException ex) {
+                return r==null ? e : mip.sum(r,e);
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
             }

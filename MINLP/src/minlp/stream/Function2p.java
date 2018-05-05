@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package minlp;
+package minlp.stream;
+
+import minlp.Expr;
 
 /**
  *
  * @author marcio
  */
-public interface MINLPConsumer<T> {
-    public void accept(T t) throws Exception;
+public interface Function2p {
+    public Expr accept(Integer i, Integer j) throws Exception;
 }

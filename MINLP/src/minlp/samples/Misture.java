@@ -5,30 +5,30 @@
  */
 package minlp.samples;
 
-import ilog.concert.IloException;
-import ilog.concert.IloNumExpr;
-import ilog.concert.IloNumVar;
+import minlp.Expr;
 import minlp.MINLP;
 import minlp.Set;
+import minlp.Var;
+import minlp.cplex.CPLEX;
+import minlp.glpk.GLPK;
 
 /**
  *
  * @author marcio
  */
-public class MistureProblemNew {
+public class Misture {
     /**
      * This code test a more easy way to encode model with Java API
      * It's used a sample of mixture problem to demonstrate that
      * @param args
-     * @throws IloException 
+     * @throws Exception 
      */
-    public static void main(String[] args) throws IloException {
-        MINLP cplex = new MINLP();
-        
+    public static void main(String[] args) throws Exception {
+        MINLP lp = new GLPK(); // or new CPLEX();
         //conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
-        Set<Integer> I = cplex.range(3);
+        Set I = lp.range(3);
         //conjunto dos nutrientes   J = {0, 1}      <->   {Proteina, Calcio}
-        Set<Integer> J = cplex.range(2);
+        Set J = lp.range(2);
         
         //Ci : custo por kg de ingrediente i
         double C[] = {0.56, 0.81, 0.46};     
@@ -41,32 +41,34 @@ public class MistureProblemNew {
         double B[] = {0.3, 0.5};
         
         //xi >= 0
-        IloNumVar x[] = cplex.numVarArrayPos(I);
+        Var x[] = lp.numVarArray(I, 0, Double.POSITIVE_INFINITY, "x");
         
         //obj = sum_i{Ci * xi}
-        IloNumExpr obj = cplex.sum(I, i -> cplex.prod(C[i],x[i]));
+        Expr obj = lp.sum(I, i -> lp.prod(C[i],x[i]));
         
-        cplex.addMinimize(obj);
+        //System.out.println(obj);
+        
+        lp.addMinimize(obj);
         
         //for all j in J
-        cplex.forAll(J, (j)->{
+        lp.forAll(J, (j)->{
             //sum_i{Aji * xi} >= Bj
-            cplex.addGe(cplex.sum(I, i -> cplex.prod(A[j][i], x[i])), B[j]);
+            lp.addGe(lp.sum(I, i -> lp.prod(A[j][i], x[i])), B[j]);
         });
-        
         //sum_i{xi} = 1
-        cplex.addEq(cplex.sum(I, i-> x[i]), 1);
+        lp.addEq(lp.sum(I, i-> x[i]), 1);
         
-        cplex.exportModel("model.lp");
+        lp.exportModel("model.lp");
         
-        if(cplex.solve()){
-            System.out.println(cplex.getStatus());
-            System.out.println(cplex.getObjValue());
-            cplex.forAll(I, (i)->{
-                System.out.printf("x[%d] = %f\n", i, cplex.getValue(x[i]));
+        if(lp.solve()){
+            System.out.println(lp.getStatus());
+            System.out.println(lp.getObjValue());
+            lp.forAll(I, (i)->{
+                System.out.printf("x[%d] = %f\n", i, lp.getValue(x[i]));
             });
         }else{
-            System.out.println(cplex.getStatus());
+            System.out.println(lp.getStatus());
         }
+        lp.delete();
     }
 }
