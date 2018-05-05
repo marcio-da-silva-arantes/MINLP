@@ -5,13 +5,11 @@
  */
 package minlp.samples;
 
-import ilog.concert.IloConstraint;
-import ilog.concert.IloException;
-import ilog.concert.IloNumExpr;
-import ilog.concert.IloNumVar;
-import minlp.Cont;
-import minlp.Cont2;
+import minlp.Expr;
 import minlp.MINLP;
+import minlp.cplex.CPLEX;
+import minlp.glpk.GLPK;
+import minlp.nlVar;
 
 /**
  *
@@ -30,48 +28,44 @@ public class Equation3nd {
      * @param args
      * @throws IloException 
      */
-    public static void main(String[] args) throws IloException {
-        MINLP cplex = new MINLP(1e4);
+    public static void main(String[] args) throws Exception {
+        MINLP mip = new CPLEX();   //do not work for GLPK yet
         
         // x in R   / [-10, +10]    using 16 bits of precision
-        Cont2 var = new Cont2(cplex, -10, +10, 32);
+        nlVar var = new nlVar(mip, -10, +10, 32, "x");
         
-        IloNumExpr x1 = var.val;         //linear term: is directily the value of x
-        IloNumExpr x2 = var.addProd(x1); //quadratic term: is the product of x to the linear term
-        IloNumExpr x3 = var.addProd(x2); //cubic term: is the product of x to the quadratic term 
+        Expr x1 = var.value;         //linear term: is directily the value of x
+        Expr x2 = var.linerizedProd(x1); //quadratic term: is the product of x to the linear term
+        Expr x3 = var.linerizedProd(x2); //cubic term: is the product of x to the quadratic term 
         
         
         //build the main expression
-        IloNumExpr expr = cplex.constant(-6);               //constant term
-        expr = cplex.sum(expr, cplex.prod(+11, x1));   //linear term
-        expr = cplex.sum(expr, cplex.prod(-6, x2));    //quadratic term
-        expr = cplex.sum(expr, cplex.prod(+1, x3));    //cubic term
+        Expr expr = mip.constant(-6);               //constant term
+        expr = mip.sum(expr, mip.prod(+11, x1));   //linear term
+        expr = mip.sum(expr, mip.prod(-6, x2));    //quadratic term
+        expr = mip.sum(expr, mip.prod(+1, x3));    //cubic term
         
         
         //cplex.addRange(-0.01, expr, 0.01);
-        cplex.addEq(expr, 0);
+        mip.addEq(expr, 0);
         
-        cplex.addMinimize(var.val);   //find the smaller x first
+        mip.addMinimize(var.value);   //find the smaller x first
         
-        cplex.setOut(null);
-        cplex.setWarning(null);
+        mip.setOut(null);
+        mip.setWarning(null);
         
         //finding the three solutions if exists
         for(int i=0; i<3; i++){
-            if(cplex.solve()){
-                double val_x = cplex.getValue(var.val);
+            if(mip.solve()){
+                double val_x = mip.getValue(var.value);
                 
-                System.out.printf("x%d = %1.2f  -> error = %g\n", i+1, val_x, cplex.getValue(expr));
+                System.out.printf("x%d = %1.2f  -> error = %g\n", i+1, val_x, mip.getValue(expr));
                 
-                cplex.addGe(var.val, val_x+0.01);   //set to ignore this solution and find next x
+                mip.addGe(var.value, val_x+0.01);   //set to ignore this solution and find next x
             }else{
-                System.out.printf("x%d = ????  -> status = %s\n", i+1, cplex.getStatus());
+                System.out.printf("x%d = ????  -> status = %s\n", i+1, mip.getStatus());
             }
-            
-        
         }
-        
-            
     }
     
 }

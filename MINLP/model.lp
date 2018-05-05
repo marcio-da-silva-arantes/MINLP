@@ -1,10 +1,11 @@
-\ENCODING=ISO-8859-1
-\Problem name: ilog.cplex
-
-Minimize
- obj: 0.46 x1 + 0.56 x2 + 0.81 x3
-Subject To
- c1: 0.4 x1 + 0.2 x2 + 0.5 x3 >= 0.3
- c2: 0.4 x1 + 0.6 x2 + 0.4 x3 >= 0.5
- c3: x1 + x2 + x3  = 1
-End
+p mip max 1 2 2
+n z objective
+i 1 u 1.5
+n i 1 r1
+n j 1 x1
+n j 2 x2
+a 0 1 1
+a 0 2 1
+a 1 2 1
+a 1 1 1
+e o f
