@@ -1,7 +1,8 @@
 # MINLP
-IBM ILOG CPLEX solver extension for Mixed Integer Nonlinear Programming (MINLP) in Java. 
-Easy donwload here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar), 
-to use this library you must also install and import the Solver IBM Ilog Cplex 12.6 or higher into your project.
+MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
+This library encode the models using the solvers Cplex and Glpk, so you must install boths to full to use this library, to install this dependences see:
+* [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) 
+* [Glpk](http://ftp.gnu.org/gnu/glpk/) 
 
 #### Main idea of how it is done
 <pre>
@@ -24,75 +25,75 @@ linear transformation:
 #### General easy encoding
 * <math>&sum;<sub>i&in;I</sub> ( x<sub>i</sub> )</math>
 ```javascript
-	cplex.sum(I, i -> x[i])
+	mip.sum(I, i -> x[i])
 ```
 
 * <math>&sum;<sub>i&in;I</sub> &sum;<sub>j&in;J</sub> ( C<sub>ij</sub> x<sub>ij</sub> ) </math>
 ```javascript
-	cplex.sum(I, i -> cplex.sum(J, j -> cplex.prod(C[i][j], x[i][j]))) )
+	mip.sum(I, i -> mip.sum(J, j -> mip.prod(C[i][j], x[i][j]))) )
 ```
 
 * <math> x<sub>i</sub> &le; b<sub>i</sub> 	&forall;(i&in;I)</math>
 ```javascript
-	cplex.forAll(I, (i)->{
-		cplex.addLe(x[i], b[i]);
+	mip.forAll(I, (i)->{
+		mip.addLe(x[i], b[i]);
 	});
 ```
 
 * <math>&sum;<sub>i&in;I</sub> ( A<sub>ji</sub> x<sub>i</sub> ) &ge; B<sub>j</sub>	&forall;(j&in;J)</math>
 ```javascript
-	cplex.forAll(J, (j)->{
-		cplex.addGe(cplex.sum(I, i -> cplex.prod(A[j][i], x[i])), B[j]);
+	mip.forAll(J, (j)->{
+		mip.addGe(mip.sum(I, i -> mip.prod(A[j][i], x[i])), B[j]);
 	});
 ```
 
 #### A easy way to encode (sample of mixture problem)
 
 ```javascript
-MINLP cplex = new MINLP();
+MINLP mip = new GLPK();  //or new CPLEX(); to use cplex solver
         
 //conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
-Set<Integer> I = cplex.range(3);
+Set<Integer I = mip.range(3);
 //conjunto dos nutrientes   J = {0, 1}      <->   {Proteina, Calcio}
-Set<Integer> J = cplex.range(2);
+Set J = mip.range(2);
 
-//Ci : custo por kg de ingrediente i
+//Ci : cost per kg of ingredient i
 double C[] = {0.56, 0.81, 0.46};     
-//Aji: quantia do nutriente j por kg de ingrediente i
+//Aji: amount of nutrient j per kg of ingredient i
 double A[][] = {
 	{0.2, 0.5, 0.4},
 	{0.6, 0.4, 0.4},
 };
-//Bj: quantia minima de nutriente j na racao
+//Bj: minimum amount of nutrient j already
 double B[] = {0.3, 0.5};
 
 //xi >= 0
-IloNumVar x[] = cplex.numVarArrayPos(I);
+Var x[] = mip.numVarArrayPos(I);
 
 //obj = sum_i{Ci * xi}
-IloNumExpr obj = cplex.sum(I, i -> cplex.prod(C[i],x[i]));
+Expr obj = mip.sum(I, i -> mip.prod(C[i],x[i]));
 
-cplex.addMinimize(obj);
+mip.addMinimize(obj);
 
 //for all j in J
-cplex.forAll(J, (j)->{
+mip.forAll(J, (j)->{
 	//sum_i{Aji * xi} >= Bj
-	cplex.addGe(cplex.sum(I, i -> cplex.prod(A[j][i], x[i])), B[j]);
+	mip.addGe(mip.sum(I, i -> mip.prod(A[j][i], x[i])), B[j]);
 });
 
 //sum_i{xi} = 1
-cplex.addEq(cplex.sum(I, i-> x[i]), 1);
+mip.addEq(mip.sum(I, i-> x[i]), 1);
 
-cplex.exportModel("model.lp");
+mip.exportModel("model.lp");
 
-if(cplex.solve()){
-	System.out.println(cplex.getStatus());
-	System.out.println(cplex.getObjValue());
-	cplex.forAll(I, (i)->{
-		System.out.printf("x[%d] = %f\n", i, cplex.getValue(x[i]));
+if(mip.solve()){
+	System.out.println(mip.getStatus());
+	System.out.println(mip.getObjValue());
+	mip.forAll(I, (i)->{
+		System.out.printf("x[%d] = %f\n", i, mip.getValue(x[i]));
 	});
 }else{
-	System.out.println(cplex.getStatus());
+	System.out.println(mip.getStatus());
 }
 ```
 
