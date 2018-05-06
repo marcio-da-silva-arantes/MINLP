@@ -53,7 +53,7 @@ linear transformation:
 MINLP mip = new GLPK();  //or new CPLEX(); to use cplex solver
         
 //conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
-Set<Integer I = mip.range(3);
+Set I = mip.range(3);
 //conjunto dos nutrientes   J = {0, 1}      <->   {Proteina, Calcio}
 Set J = mip.range(2);
 
@@ -68,7 +68,7 @@ double A[][] = {
 double B[] = {0.3, 0.5};
 
 //xi >= 0
-Var x[] = mip.numVarArrayPos(I);
+Var x[] = mip.numVarArray(I, 0, Double.POSITIVE_INFINITY, "x");
 
 //obj = sum_i{Ci * xi}
 Expr obj = mip.sum(I, i -> mip.prod(C[i],x[i]));
