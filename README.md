@@ -1,4 +1,8 @@
 # MINLP
+
+* **Version:** v2.0.1
+* **Date:** 05/05/2018
+
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
 This library encode the models using the solvers Cplex and Glpk, so you must install boths to full to use this library, to install this dependences see:
 * [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) 
