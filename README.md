@@ -4,7 +4,7 @@ This library encode the models using the solvers Cplex and Glpk, so you must ins
 * [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) 
 * [Glpk](http://ftp.gnu.org/gnu/glpk/) 
 
-#### Main idea of how it is done
+#### Main idea of how some simple linear transformations are done by MINLP
 <pre>
 define:
   let x ∈ R
@@ -25,12 +25,12 @@ linear transformation:
 #### General easy encoding
 * <math>&sum;<sub>i&in;I</sub> ( x<sub>i</sub> )</math>
 ```javascript
-	mip.sum(I, i -> x[i])
+	mip.sum(I, (i) -> x[i])
 ```
 
 * <math>&sum;<sub>i&in;I</sub> &sum;<sub>j&in;J</sub> ( C<sub>ij</sub> x<sub>ij</sub> ) </math>
 ```javascript
-	mip.sum(I, i -> mip.sum(J, j -> mip.prod(C[i][j], x[i][j]))) )
+	mip.sum(I, J, (i,j) -> mip.prod(C[i][j], x[i][j]) )
 ```
 
 * <math> x<sub>i</sub> &le; b<sub>i</sub> 	&forall;(i&in;I)</math>
@@ -43,7 +43,7 @@ linear transformation:
 * <math>&sum;<sub>i&in;I</sub> ( A<sub>ji</sub> x<sub>i</sub> ) &ge; B<sub>j</sub>	&forall;(j&in;J)</math>
 ```javascript
 	mip.forAll(J, (j)->{
-		mip.addGe(mip.sum(I, i -> mip.prod(A[j][i], x[i])), B[j]);
+		mip.addGe(mip.sum(I, (i) -> mip.prod(A[j][i], x[i])), B[j]);
 	});
 ```
 
