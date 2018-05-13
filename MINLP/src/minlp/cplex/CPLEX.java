@@ -20,11 +20,14 @@ import minlp.Var;
 public class CPLEX extends MINLP{
     private final Map<Integer, Var> map;
     
-    public IloCplex cpx;
+    public final IloCplex mip;
     private int n_cols = 0;
     public CPLEX() throws Exception {
-        super();
-        cpx = new IloCplex();
+        this(1e5);
+    }
+    public CPLEX(double bigM) throws Exception {
+        super(bigM);
+        mip = new IloCplex();
         map = new TreeMap();
     }
     
@@ -33,29 +36,29 @@ public class CPLEX extends MINLP{
     @Override
     public Var numVar(double lb, double ub, String name) throws Exception {
         n_cols++;
-        CPLEXVar var = new CPLEXVar(cpx.numVar(lb, ub, name), n_cols);
+        CPLEXVar var = new CPLEXVar(mip.numVar(lb, ub, name), n_cols);
         map.put(n_cols, var);
         return var;
     }
      @Override
     public Var boolVar(String name) throws Exception {
         n_cols++;
-        CPLEXVar var = new CPLEXVar(cpx.boolVar(name), n_cols);
+        CPLEXVar var = new CPLEXVar(mip.boolVar(name), n_cols);
         map.put(n_cols, var);
         return var;
     }
 
     @Override
     public Expr constant(double d) throws Exception {
-        return new CPLEXExpr(cpx.constant(d));
+        return new CPLEXExpr(mip.constant(d));
     }
     
     @Override
     public Expr prod(double coef, Expr expr) throws Exception {
         if(expr instanceof CPLEXExpr){
-            return new CPLEXExpr(cpx.prod(coef, ((CPLEXExpr)expr).expr));
+            return new CPLEXExpr(mip.prod(coef, ((CPLEXExpr)expr).expr));
         }else if(expr instanceof CPLEXVar){
-            return new CPLEXExpr(cpx.prod(coef, ((CPLEXVar)expr).var));
+            return new CPLEXExpr(mip.prod(coef, ((CPLEXVar)expr).var));
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -64,13 +67,13 @@ public class CPLEX extends MINLP{
     @Override
     public Expr sum(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            return new CPLEXExpr(cpx.sum(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr));
+            return new CPLEXExpr(mip.sum(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr));
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            return new CPLEXExpr(cpx.sum(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var));
+            return new CPLEXExpr(mip.sum(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var));
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            return new CPLEXExpr(cpx.sum(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr));
+            return new CPLEXExpr(mip.sum(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr));
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            return new CPLEXExpr(cpx.sum(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var));
+            return new CPLEXExpr(mip.sum(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var));
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -79,38 +82,38 @@ public class CPLEX extends MINLP{
     @Override
     public void addMinimize(Expr obj) throws Exception {
         if(obj instanceof CPLEXExpr){
-            cpx.addMinimize(((CPLEXExpr)obj).expr);
+            mip.addMinimize(((CPLEXExpr)obj).expr);
         }else{
-            cpx.addMinimize(((CPLEXVar)obj).var);
+            mip.addMinimize(((CPLEXVar)obj).var);
         }
     }
     @Override
     public void addMaximize(Expr obj) throws Exception {
         if(obj instanceof CPLEXExpr){
-            cpx.addMaximize(((CPLEXExpr)obj).expr);
+            mip.addMaximize(((CPLEXExpr)obj).expr);
         }else{
-            cpx.addMaximize(((CPLEXVar)obj).var);
+            mip.addMaximize(((CPLEXVar)obj).var);
         }
     }
 
     @Override
     public void addGe(Expr expr, double d) throws Exception {
         if(expr instanceof CPLEXExpr){
-            cpx.addGe(((CPLEXExpr)expr).expr, d);
+            mip.addGe(((CPLEXExpr)expr).expr, d);
         }else{
-            cpx.addGe(((CPLEXVar)expr).var, d);
+            mip.addGe(((CPLEXVar)expr).var, d);
         }
     }
     @Override
     public void addGe(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            cpx.addGe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
+            mip.addGe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            cpx.addGe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
+            mip.addGe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            cpx.addGe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
+            mip.addGe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            cpx.addGe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
+            mip.addGe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -119,22 +122,22 @@ public class CPLEX extends MINLP{
     @Override
     public void addLe(Expr expr, double d) throws Exception {
         if(expr instanceof CPLEXExpr){
-            cpx.addLe(((CPLEXExpr)expr).expr, d);
+            mip.addLe(((CPLEXExpr)expr).expr, d);
         }else{
-            cpx.addLe(((CPLEXVar)expr).var, d);
+            mip.addLe(((CPLEXVar)expr).var, d);
         }
         
     }
     @Override
     public void addLe(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            cpx.addLe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
+            mip.addLe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            cpx.addLe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
+            mip.addLe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            cpx.addLe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
+            mip.addLe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            cpx.addLe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
+            mip.addLe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -143,21 +146,21 @@ public class CPLEX extends MINLP{
     @Override
     public void addEq(Expr expr, double d) throws Exception {
         if(expr instanceof CPLEXExpr){
-            cpx.addEq(((CPLEXExpr)expr).expr, d);
+            mip.addEq(((CPLEXExpr)expr).expr, d);
         }else{
-            cpx.addEq(((CPLEXVar)expr).var, d);
+            mip.addEq(((CPLEXVar)expr).var, d);
         }
     }
     @Override
     public void addEq(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            cpx.addEq(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
+            mip.addEq(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            cpx.addEq(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
+            mip.addEq(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            cpx.addEq(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
+            mip.addEq(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            cpx.addEq(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
+            mip.addEq(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -166,64 +169,64 @@ public class CPLEX extends MINLP{
     
     @Override
     public void exportModel(String fname) throws Exception {
-        cpx.exportModel(fname);
+        mip.exportModel(fname);
     }
 
     @Override
     public boolean solve() throws Exception {
-        return cpx.solve();
+        return mip.solve();
     }
 
     @Override
     public String getStatus() throws Exception {
-        return cpx.getStatus().toString();
+        return mip.getStatus().toString();
     }
 
     @Override
     public double getObjValue() throws Exception {
-        return cpx.getObjValue();
+        return mip.getObjValue();
     }
 
     @Override
     public double getValue(Var x) throws Exception {
-        return cpx.getValue(((CPLEXVar)x).var);
+        return mip.getValue(((CPLEXVar)x).var);
     }
     @Override
     public double getValue(Expr x) throws Exception {
-        return cpx.getValue(((CPLEXExpr)x).expr);
+        return mip.getValue(((CPLEXExpr)x).expr);
     }
     @Override
     public void delete() throws Exception {
-        cpx.end();
+        mip.end();
     }
 
     @Override
     public void setOut(PrintStream stream) throws Exception {
-        cpx.setOut(stream);
+        mip.setOut(stream);
     }
 
     @Override
     public void setWarning(PrintStream stream) throws Exception {
-        cpx.setWarning(stream);
+        mip.setWarning(stream);
     }
 
     @Override
     public int getNcols() throws Exception {
-        return cpx.getNcols();
+        return mip.getNcols();
     }
 
     @Override
     public int getNrows() throws Exception {
-        return cpx.getNrows();
+        return mip.getNrows();
     }
 
     @Override
     public int getNbinVars() throws Exception {
-        return cpx.getNbinVars();
+        return mip.getNbinVars();
     }
     @Override
     public int getNintVars() throws Exception {
-        return cpx.getNintVars();
+        return mip.getNintVars();
     }
 
     @Override

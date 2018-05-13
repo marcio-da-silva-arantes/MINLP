@@ -14,7 +14,7 @@ import minlp.glpk.GLPK;
  *
  * @author marcio
  */
-public class Test {
+public class TestGLPKFail {
 
     public static void main(String[] args) throws Exception {
         // TODO code application logic here

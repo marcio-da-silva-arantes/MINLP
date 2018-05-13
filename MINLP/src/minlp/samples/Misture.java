@@ -11,6 +11,7 @@ import minlp.Set;
 import minlp.Var;
 import minlp.cplex.CPLEX;
 import minlp.glpk.GLPK;
+import minlp.gurobi.Gurobi;
 
 /**
  *
@@ -24,11 +25,11 @@ public class Misture {
      * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
-        MINLP lp = new GLPK(); // or new CPLEX();
+        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         //conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
-        Set I = lp.range(3);
+        Set I = mip.range(3);
         //conjunto dos nutrientes   J = {0, 1}      <->   {Proteina, Calcio}
-        Set J = lp.range(2);
+        Set J = mip.range(2);
         
         //Ci : custo por kg de ingrediente i
         double C[] = {0.56, 0.81, 0.46};     
@@ -41,34 +42,34 @@ public class Misture {
         double B[] = {0.3, 0.5};
         
         //xi >= 0
-        Var x[] = lp.numVarArray(I, 0, Double.POSITIVE_INFINITY, "x");
+        Var x[] = mip.numVarArray(I, 0, Double.POSITIVE_INFINITY, "x");
         
         //obj = sum_i{Ci * xi}
-        Expr obj = lp.sum(I, i -> lp.prod(C[i],x[i]));
+        Expr obj = mip.sum(I, i -> mip.prod(C[i],x[i]));
         
         //System.out.println(obj);
         
-        lp.addMinimize(obj);
+        mip.addMinimize(obj);
         
         //for all j in J
-        lp.forAll(J, (j)->{
+        mip.forAll(J, (j)->{
             //sum_i{Aji * xi} >= Bj
-            lp.addGe(lp.sum(I, i -> lp.prod(A[j][i], x[i])), B[j]);
+            mip.addGe(mip.sum(I, i -> mip.prod(A[j][i], x[i])), B[j]);
         });
         //sum_i{xi} = 1
-        lp.addEq(lp.sum(I, i-> x[i]), 1);
+        mip.addEq(mip.sum(I, i-> x[i]), 1);
         
-        lp.exportModel("model.lp");
+        mip.exportModel("model.lp");
         
-        if(lp.solve()){
-            System.out.println(lp.getStatus());
-            System.out.println(lp.getObjValue());
-            lp.forAll(I, (i)->{
-                System.out.printf("x[%d] = %f\n", i, lp.getValue(x[i]));
+        if(mip.solve()){
+            System.out.println(mip.getStatus());
+            System.out.println(mip.getObjValue());
+            mip.forAll(I, (i)->{
+                System.out.printf("x[%d] = %f\n", i, mip.getValue(x[i]));
             });
         }else{
-            System.out.println(lp.getStatus());
+            System.out.println(mip.getStatus());
         }
-        lp.delete();
+        mip.delete();
     }
 }

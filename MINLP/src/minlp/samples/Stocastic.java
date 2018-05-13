@@ -16,7 +16,7 @@ import minlp.glpk.GLPK;
 public class Stocastic {
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        MINLP mip = new GLPK();     //do not work for GLPK yet
+        MINLP mip = new GLPK(); 
         
         Var x1 = mip.numVar(0, 10, "x1");
         Var x2 = mip.numVar(0, 10, "x2");

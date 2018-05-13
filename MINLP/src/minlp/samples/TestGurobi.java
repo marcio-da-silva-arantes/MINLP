@@ -8,6 +8,7 @@ package minlp.samples;
 import gurobi.GRB;
 import gurobi.GRBEnv;
 import gurobi.GRBException;
+import gurobi.GRBExpr;
 import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
@@ -16,7 +17,7 @@ import gurobi.GRBVar;
  *
  * @author Marcio
  */
-public class Gurobi {
+public class TestGurobi {
 
     public static void main(String[] args) {
         try {
@@ -65,7 +66,9 @@ public class Gurobi {
             }
             model.addConstr(sum1, GRB.EQUAL, 5, "one");
             
+            model.write("model.lp");
             // Solve
+            
             model.optimize();
             
             if (model.get(GRB.IntAttr.Status) == GRB.Status.OPTIMAL) {

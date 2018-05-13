@@ -10,6 +10,7 @@ import minlp.MINLP;
 import minlp.Var;
 import minlp.cplex.CPLEX;
 import minlp.glpk.GLPK;
+import minlp.gurobi.Gurobi;
 import minlp.nlVar;
 
 /**
@@ -26,7 +27,8 @@ public class NonLinearProd {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        MINLP mip = new CPLEX();     //do not work for GLPK yet
+        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
+        
         // x in R   / [-4, +3] 
         Var x = mip.numVar(-4, 3, "x");
         // y in R   / [-5.5, +6.5]
@@ -38,7 +40,7 @@ public class NonLinearProd {
         x.setLB(-3);
         x.setUB(+2);
         
-        mip.addMaximize(v);
+        mip.addMinimize(v);
         
         mip.exportModel("model.lp");
         
@@ -57,8 +59,7 @@ public class NonLinearProd {
             
             for(int i=0; i<mip.getNcols(); i++){
                 Var var = mip.getVar(i);
-                System.out.println(var.getName());
-                System.out.printf("col[%d] = %6.2f  %s\n", i, mip.getValue(var), var.getName());
+                System.out.printf("col[%d] = %6.2f  | %s\n", i, mip.getValue(var), var.getName());
             }
         }else{
             System.out.println("status = "+mip.getStatus());

@@ -18,8 +18,8 @@ import org.gnu.glpk.glp_prob;
 public class GLPKVar implements Var{
     private final glp_prob mip;
     protected final int col;
-    private final double lb, ub;
-    private final String name;
+    private double lb, ub;
+    private String name;
     
     public GLPKVar(glp_prob mip, int col, double lb, double ub, String name) {
         this.mip = mip;
@@ -41,11 +41,13 @@ public class GLPKVar implements Var{
 
     @Override
     public void setLB(double lb) throws Exception {
+        this.lb = lb;
         glp_set_col_bnds(mip, col, GLPKConstants.GLP_LO, lb, 0);
     }
 
     @Override
     public void setUB(double ub) throws Exception {
+        this.lb = ub;
         glp_set_col_bnds(mip, col, GLPKConstants.GLP_UP, 0, ub);
     }
 
@@ -56,6 +58,7 @@ public class GLPKVar implements Var{
 
     @Override
     public void setName(String name) {
+        this.name = name;
         glp_set_col_name(mip, col, name);
     }
 

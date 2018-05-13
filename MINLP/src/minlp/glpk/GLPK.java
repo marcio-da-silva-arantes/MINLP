@@ -23,8 +23,13 @@ import org.gnu.glpk.glp_smcp;
  * @author Marcio
  */
 public class GLPK extends MINLP{
-    private glp_prob mip;
+    private final glp_prob mip;
+    
     public GLPK() throws Exception {
+        this(1e5);
+    }
+    public GLPK(double bigM) throws Exception {
+        super(bigM);
         mip = glp_create_prob();
     }
     

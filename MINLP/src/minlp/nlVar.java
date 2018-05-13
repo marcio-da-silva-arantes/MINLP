@@ -27,7 +27,7 @@ public class nlVar {
         this.precision = (ub-lb)/(Math.pow(2, nBits)-1);
         this.y = new Var[nBits];
         for(int i=0; i<nBits; i++){
-            this.y[i] = mip.boolVar(name+".bits["+i+"]");
+            this.y[i] = mip.boolVar(name+".bits("+i+")");
         }
         Expr sum = mip.constant(lb);
         long base = 1;
@@ -44,7 +44,7 @@ public class nlVar {
         Expr sum = mip.prod(lb, x);
         long base = 1;
         for(int i=0; i<y.length; i++){
-            Var vi = mip.linerizedProd(x, y[i], name+".prod["+count+"]["+i+"]");
+            Var vi = mip.linerizedProd(x, y[i], name+".prod("+count+","+i+")");
             sum = mip.sum(sum, mip.prod(base*precision, vi));
             base *= 2;
         }

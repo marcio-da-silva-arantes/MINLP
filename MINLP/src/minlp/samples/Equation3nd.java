@@ -9,6 +9,7 @@ import minlp.Expr;
 import minlp.MINLP;
 import minlp.cplex.CPLEX;
 import minlp.glpk.GLPK;
+import minlp.gurobi.Gurobi;
 import minlp.nlVar;
 
 /**
@@ -29,9 +30,9 @@ public class Equation3nd {
      * @throws IloException 
      */
     public static void main(String[] args) throws Exception {
-        MINLP mip = new CPLEX();   //do not work for GLPK yet
+        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         
-        // x in R   / [-10, +10]    using 16 bits of precision
+        // x in R   / [-10, +10]    using 32 bits of precision
         nlVar var = new nlVar(mip, -10, +10, 32, "x");
         
         Expr x1 = var.value;         //linear term: is directily the value of x

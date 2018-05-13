@@ -23,9 +23,9 @@ import minlp.stream.Function4p;
 public abstract class MINLP {
     private final double M;    //big M
 
-    public MINLP() throws Exception {
-        this(1e2);
-    }
+    /*public MINLP() throws Exception {
+        this(1e5);
+    }*/
     public MINLP(double bigM) throws Exception {
         this.M = bigM;
     }
@@ -53,7 +53,7 @@ public abstract class MINLP {
     public final Var[] numVarArray(Set s, double lb, double ub, String name) throws Exception{
         Var array[] = new Var[s.size()];
         s.forAll(i -> {
-            array[i] = numVar(lb, ub, name+"["+i+"]");
+            array[i] = numVar(lb, ub, name+"("+i+")");
         });
         return array;
     }
@@ -63,7 +63,7 @@ public abstract class MINLP {
     public final Var[][] numVarArray(Set s1, Set s2, double lb, double ub, String name) throws Exception{
         Var array[][] = new Var[s1.size()][];
         s1.forAll(i -> {
-            array[i] = numVarArray(s2, lb, ub, name+"["+i+"]");
+            array[i] = numVarArray(s2, lb, ub, name+"("+i+")");
         });
         return array;
     }
@@ -73,7 +73,7 @@ public abstract class MINLP {
     public final Var[][][] numVarArray(Set s1, Set s2, Set s3, double lb, double ub, String name) throws Exception{
         Var array[][][] = new Var[s1.size()][][];
         s1.forAll(i -> {
-            array[i] = numVarArray(s2, s3, lb, ub, name+"["+i+"]");
+            array[i] = numVarArray(s2, s3, lb, ub, name+"("+i+")");
         });
         return array;
     }
@@ -83,7 +83,7 @@ public abstract class MINLP {
     public final Var[][][][] numVarArray(Set s1, Set s2, Set s3, Set s4, double lb, double ub, String name) throws Exception{
         Var array[][][][] = new Var[s1.size()][][][];
         s1.forAll(i -> {
-            array[i] = numVarArray(s2, s3, s4, lb, ub, name+"["+i+"]");
+            array[i] = numVarArray(s2, s3, s4, lb, ub, name+"("+i+")");
         });
         return array;
     }
@@ -105,7 +105,7 @@ public abstract class MINLP {
     public final Var[][] boolVarArray(Set s1, Set s2, String name) throws Exception{
         Var array[][] = new Var[s1.size()][];
         s1.forAll(i -> {
-            array[i] = boolVarArray(s2, name+"["+i+"]");
+            array[i] = boolVarArray(s2, name+"("+i+")");
         });
         return array;
     }
@@ -115,7 +115,7 @@ public abstract class MINLP {
     public final Var[][][] boolVarArray(Set s1, Set s2, Set s3, String name) throws Exception{
         Var array[][][] = new Var[s1.size()][][];
         s1.forAll(i -> {
-            array[i] = boolVarArray(s2, s3, name+"["+i+"]");
+            array[i] = boolVarArray(s2, s3, name+"("+i+")");
         });
         return array;
     }
@@ -125,7 +125,7 @@ public abstract class MINLP {
     public final Var[][][][] boolVarArray(Set s1, Set s2, Set s3, Set s4, String name) throws Exception{
         Var array[][][][] = new Var[s1.size()][][][];
         s1.forAll(i -> {
-            array[i] = boolVarArray(s2, s3, s4, name+"["+i+"]");
+            array[i] = boolVarArray(s2, s3, s4, name+"("+i+")");
         });
         return array;
     }

@@ -11,6 +11,7 @@ import minlp.Set;
 import minlp.Var;
 import minlp.cplex.CPLEX;
 import minlp.glpk.GLPK;
+import minlp.gurobi.Gurobi;
 
 /**
  *
@@ -18,10 +19,10 @@ import minlp.glpk.GLPK;
  */
 public class TSP {
     public static void main(String[] args) throws Exception {
-        MINLP lp = new GLPK();
+        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         //conjunto das cidades i, j \in N 
-        Set N = lp.range(5);
-        
+        Set N = mip.range(5);
+       
         //C : custo de ir da cidade i para cidade j
         double C[][] = {
             {0, 	89, 	47, 	9, 	52},
@@ -32,64 +33,64 @@ public class TSP {
         };     
 
         //x >= 0 forall i, j
-        Var x[][] = lp.boolVarArray(N, N, "x");
-        Var u[] = lp.numVarArray(N, 0, Double.POSITIVE_INFINITY, "u");
+        Var x[][] = mip.boolVarArray(N, N, "x");
+        Var u[] = mip.numVarArray(N, 0, Double.POSITIVE_INFINITY, "u");
         
         //obj = sum_{i,j}{Cij * Xij}
-        Expr obj = lp.sum(N,N, (i,j) -> lp.prod(C[i][j],x[i][j]));
+        Expr obj = mip.sum(N,N, (i,j) -> mip.prod(C[i][j],x[i][j]));
         
-        lp.addMinimize(obj);
+        mip.addMinimize(obj);
         
         //for all j in N
-        lp.forAll(N, (j)->{
+        mip.forAll(N, (j)->{
             //sum_i{Xij} == 1 
-            lp.addEq(lp.sum(N, i -> x[i][j]), 1);
+            mip.addEq(mip.sum(N, i -> x[i][j]), 1);
         });
         
         //for all i in N
-        lp.forAll(N, (i)->{
+        mip.forAll(N, (i)->{
             //sum_j{Xij} == 1 
-            lp.addEq(lp.sum(N, j -> x[i][j]), 1);
+            mip.addEq(mip.sum(N, j -> x[i][j]), 1);
         });
 
         //for all i in N and j in N with i > 0 and j > 0
-        lp.forAll(N, N, (i,j)->{
+        mip.forAll(N, N, (i,j)->{
             if(i<N.size()-1 && j<N.size()-1 && i!=j){
                 Expr aux[] = new Expr[3];
-                aux[0] = lp.prod(+1, u[i]);
-                aux[1] = lp.prod(-1, u[j]);
-                aux[2] = lp.prod(N.size(), x[i][j]);
-                lp.addLe(lp.sum(aux), N.size()-1);
+                aux[0] = mip.prod(+1, u[i]);
+                aux[1] = mip.prod(-1, u[j]);
+                aux[2] = mip.prod(N.size(), x[i][j]);
+                mip.addLe(mip.sum(aux), N.size()-1);
             }
         });
         
         //for all i in N
-        lp.forAll(N, (i)->{
+        mip.forAll(N, (i)->{
             x[i][i].setUB(0);
         });
         
-        lp.exportModel("model.lp");
+        mip.exportModel("model.lp");
         
-        if(lp.solve()){
-            System.out.println(lp.getStatus());
-            System.out.println(lp.getObjValue());
+        if(mip.solve()){
+            System.out.println(mip.getStatus());
+            System.out.println(mip.getObjValue());
             System.out.println("---------------- x ------------------");
-            lp.forAll(N, (i)->{
-                lp.forAll(N, (j)->{
-                    System.out.printf("%5.2f ", lp.getValue(x[i][j]));
+            mip.forAll(N, (i)->{
+                mip.forAll(N, (j)->{
+                    System.out.printf("%5.2f ", mip.getValue(x[i][j]));
                 });
                 System.out.println();
             });
             System.out.println("---------------- u ------------------");
-            lp.forAll(N, (i)->{
+            mip.forAll(N, (i)->{
                 if(i<N.size()-1){
-                    System.out.printf("%5f ", lp.getValue(u[i]));
+                    System.out.printf("%5f ", mip.getValue(u[i]));
                 }
             });
             System.out.println();
         }else{
-            System.out.println(lp.getStatus());
+            System.out.println(mip.getStatus());
         }
-        lp.delete();
+        mip.delete();
     }
 }

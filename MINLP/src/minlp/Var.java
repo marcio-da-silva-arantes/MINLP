@@ -20,7 +20,7 @@ public interface Var extends Expr{
 
     public void setUB(double ub) throws Exception;
 
-    public String getName();
+    public String getName() throws Exception;
 
-    public void setName(String name);
+    public void setName(String name) throws Exception;
 }
