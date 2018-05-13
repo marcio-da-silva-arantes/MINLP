@@ -223,14 +223,20 @@ public class Gurobi extends MINLP{
 
     @Override
     public void setOut(PrintStream stream) throws Exception {
-        mip.set(GRB.IntParam.OutputFlag, 0);
+        System.err.println("MINLP warning: setOut on Gurobi solver only will be used to enable/disable the output:");
+        if(stream==null){
+            System.err.println("setting output off");
+            mip.set(GRB.IntParam.OutputFlag, 0);
+        }else{
+            System.err.println("setting output on");
+            mip.set(GRB.IntParam.OutputFlag, 1);
+        }
     }
 
     @Override
     public void setWarning(PrintStream stream) throws Exception {
-        
+        System.err.println("MINLP warning: setWarning is not suported with Gurobi solver");
     }
-
     @Override
     public int getNcols() throws Exception {
         return mip.get(GRB.IntAttr.NumVars);

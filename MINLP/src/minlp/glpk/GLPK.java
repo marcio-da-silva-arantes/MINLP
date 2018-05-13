@@ -286,12 +286,19 @@ public class GLPK extends MINLP{
 
     @Override
     public void setOut(PrintStream stream) throws Exception {
-        glp_term_out(stream!=null ? GLPKConstants.GLP_ON : GLPKConstants.GLP_OFF);
+        System.err.println("MINLP warning: setOut on GLPK solver only will be used to enable/disable the output:");
+        if(stream==null){
+            System.err.println("setting output off");
+            glp_term_out(GLPKConstants.GLP_OFF);
+        }else{
+            System.err.println("setting output on");
+            glp_term_out(GLPKConstants.GLP_ON);
+        }
     }
 
     @Override
     public void setWarning(PrintStream stream) throws Exception {
-        
+        System.err.println("MINLP warning: setWarning is not suported with GLPK solver");
     }
 
     @Override
