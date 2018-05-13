@@ -47,7 +47,13 @@ public class CPLEX extends MINLP{
         map.put(n_cols, var);
         return var;
     }
-
+    @Override
+    public Var intVar(int lb, int ub, String name) throws Exception {
+        n_cols++;
+        CPLEXVar var = new CPLEXVar(mip.intVar(lb, ub, name), n_cols);
+        map.put(n_cols, var);
+        return var;
+    }
     @Override
     public Expr constant(double d) throws Exception {
         return new CPLEXExpr(mip.constant(d));
@@ -97,14 +103,6 @@ public class CPLEX extends MINLP{
     }
 
     @Override
-    public void addGe(Expr expr, double d) throws Exception {
-        if(expr instanceof CPLEXExpr){
-            mip.addGe(((CPLEXExpr)expr).expr, d);
-        }else{
-            mip.addGe(((CPLEXVar)expr).var, d);
-        }
-    }
-    @Override
     public void addGe(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
             mip.addGe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
@@ -118,16 +116,6 @@ public class CPLEX extends MINLP{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
     }
-    
-    @Override
-    public void addLe(Expr expr, double d) throws Exception {
-        if(expr instanceof CPLEXExpr){
-            mip.addLe(((CPLEXExpr)expr).expr, d);
-        }else{
-            mip.addLe(((CPLEXVar)expr).var, d);
-        }
-        
-    }
     @Override
     public void addLe(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
@@ -140,15 +128,6 @@ public class CPLEX extends MINLP{
             mip.addLe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
-        }
-    }
-
-    @Override
-    public void addEq(Expr expr, double d) throws Exception {
-        if(expr instanceof CPLEXExpr){
-            mip.addEq(((CPLEXExpr)expr).expr, d);
-        }else{
-            mip.addEq(((CPLEXVar)expr).var, d);
         }
     }
     @Override

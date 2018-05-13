@@ -1,12 +1,13 @@
 # MINLP
 
-* **Version:** v2.0.1
-* **Date:** 05/05/2018
+* **Version:** [v2.1.1](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
+* **Date:** 13/05/2018
 
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
-This library encode the models using the solvers Cplex and Glpk, so you must install both to use this library, see how to install this dependencies on links below:
+This library encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
 * [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) 
-* [Glpk](http://ftp.gnu.org/gnu/glpk/) 
+* [Glpk](http://ftp.gnu.org/gnu/glpk/)
+* [Gurobi] (http://www.gurobi.com/)
 
 #### Main idea of how some simple linear transformations are done by MINLP
 <pre>
@@ -20,7 +21,8 @@ logical expected result:
 linear transformation:
   let v ∈ R
   M*(y-1) + x ≤ v ≤ x - M*(y-1)
-  -M*y ≤ v ≤ M*y   
+  -M*y ≤ v ≤ M*y
+  where M is a abritrary big positive number 
 </pre>
 
 #### General easy encoding
@@ -51,7 +53,7 @@ linear transformation:
 #### A easy way to encode (sample of mixture problem)
 
 ```javascript
-MINLP mip = new GLPK();  //or new CPLEX(); to use cplex solver
+MINLP mip = new CPLEX();   //to diferent solvers use: CPLEX or Gurobi or GLPK;
         
 //conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
 Set I = mip.range(3);

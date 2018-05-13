@@ -12,9 +12,11 @@ import java.util.LinkedList;
 import minlp.stream.Consumer2p;
 import minlp.stream.Consumer3p;
 import minlp.stream.Consumer4p;
+import minlp.stream.Consumer5p;
 import minlp.stream.Function2p;
 import minlp.stream.Function3p;
 import minlp.stream.Function4p;
+import minlp.stream.Function5p;
 
 /**
  *
@@ -47,6 +49,42 @@ public abstract class MINLP {
      */
     public abstract Var boolVar(String name) throws Exception;
 
+    /**
+     * create a new integer variable with a specified name and bounds.
+     */
+    public abstract Var intVar(int lb, int ub, String name) throws Exception;
+
+    
+    public abstract Expr prod(double coef, Expr expr) throws Exception;
+    
+    public abstract Expr sum(Expr expr1, Expr expr2) throws Exception;
+    
+    public abstract void addMinimize(Expr obj) throws Exception;
+    public abstract void addMaximize(Expr obj) throws Exception;
+    
+    public abstract Expr constant(double lb) throws Exception;
+
+    public abstract void addGe(Expr expr1, Expr expr2) throws Exception;
+    public abstract void addLe(Expr expr1, Expr expr2) throws Exception;
+    public abstract void addEq(Expr expr1, Expr expr2) throws Exception;
+    
+    public abstract void exportModel(String fname) throws Exception;
+
+    public abstract boolean solve() throws Exception;
+
+    public abstract String getStatus() throws Exception;
+
+    public abstract double getObjValue() throws Exception;
+    
+    public abstract double getValue(Var var) throws Exception;
+
+    public abstract double getValue(Expr expr) throws Exception;
+
+    public abstract void delete() throws Exception;
+
+    public abstract void setOut(PrintStream stream) throws Exception;
+
+    public abstract void setWarning(PrintStream stream) throws Exception;
     /**
      * creates a array of new continuous variables with a specified name and bounds.
      */
@@ -129,11 +167,69 @@ public abstract class MINLP {
         });
         return array;
     }
+    /**
+     * creates a array of new bynary variables with a specified name.
+     */
+    public final Var[][][][][] boolVarArray(Set s1, Set s2, Set s3, Set s4, Set s5,String name) throws Exception{
+        Var array[][][][][] = new Var[s1.size()][][][][];
+        s1.forAll(i -> {
+            array[i] = boolVarArray(s2, s3, s4, s5, name+"("+i+")");
+        });
+        return array;
+    }
+    /**
+     * creates a array of new continuous variables with a specified name and bounds.
+     */
+    public final Var[] intVarArray(Set s, int lb, int ub, String name) throws Exception{
+        Var array[] = new Var[s.size()];
+        s.forAll(i -> {
+            array[i] = intVar(lb, ub, name+"("+i+")");
+        });
+        return array;
+    }
+    /**
+     * creates a array of new continuous variables with a specified name and bounds.
+     */
+    public final Var[][] intVarArray(Set s1, Set s2, int lb, int ub, String name) throws Exception{
+        Var array[][] = new Var[s1.size()][];
+        s1.forAll(i -> {
+            array[i] = intVarArray(s2, lb, ub, name+"("+i+")");
+        });
+        return array;
+    }
+    /**
+     * creates a array of new continuous variables with a specified name and bounds.
+     */
+    public final Var[][][] intVarArray(Set s1, Set s2, Set s3, int lb, int ub, String name) throws Exception{
+        Var array[][][] = new Var[s1.size()][][];
+        s1.forAll(i -> {
+            array[i] = intVarArray(s2, s3, lb, ub, name+"("+i+")");
+        });
+        return array;
+    }
+    /**
+     * creates a array of new continuous variables with a specified name and bounds.
+     */
+    public final Var[][][][] intVarArray(Set s1, Set s2, Set s3, Set s4, int lb, int ub, String name) throws Exception{
+        Var array[][][][] = new Var[s1.size()][][][];
+        s1.forAll(i -> {
+            array[i] = intVarArray(s2, s3, s4, lb, ub, name+"("+i+")");
+        });
+        return array;
+    }
+    /**
+     * creates a array of new continuous variables with a specified name and bounds.
+     */
+    public final Var[][][][][] intVarArray(Set s1, Set s2, Set s3, Set s4, Set s5, int lb, int ub, String name) throws Exception{
+        Var array[][][][][] = new Var[s1.size()][][][][];
+        s1.forAll(i -> {
+            array[i] = intVarArray(s2, s3, s4, s5, lb, ub, name+"("+i+")");
+        });
+        return array;
+    }
     
     
-    public abstract Expr prod(double coef, Expr expr) throws Exception;
     
-    public abstract Expr sum(Expr expr1, Expr expr2) throws Exception;
     
     /**<pre>
      * define: 
@@ -248,6 +344,19 @@ public abstract class MINLP {
             )
         );
     }
+    public void forAll(Set s1, Set s2, Set s3, Set s4, Set s5, Consumer5p action) {
+        s1.forAll(i -> 
+            s2.forAll(j ->
+                s3.forAll(k ->
+                    s4.forAll(m ->
+                        s5.forAll(n ->
+                            action.accept(i, j, k, m, n)
+                        )
+                    )
+                )
+            )
+        );
+    }
     /**
      * <pre>
      * Interpratation:
@@ -307,6 +416,20 @@ public abstract class MINLP {
                 )
             ); 
     }
+    public Expr sum(Set s1, Set s2, Set s3, Set s4, Set s5, Function5p mapper){
+        return 
+            s1.sum(i -> 
+                s2.sum(j -> 
+                    s3.sum(k -> 
+                        s4.sum(m -> 
+                            s5.sum(n -> 
+                                mapper.accept(i, j, k, m, n)
+                            )
+                        )
+                    )
+                )
+            ); 
+    }
     /**
      * <pre>
      * Interpratation:
@@ -332,44 +455,14 @@ public abstract class MINLP {
         return sum(constant(d), sum(array));
     }
 
-    public abstract void addMinimize(Expr obj) throws Exception;
-    public abstract void addMaximize(Expr obj) throws Exception;
     
-    public abstract Expr constant(double lb) throws Exception;
-
-    public abstract void addGe(Expr expr, double d) throws Exception;
-    public abstract void addGe(Expr expr1, Expr expr2) throws Exception;
-    
-    public abstract void addLe(Expr expr, double d) throws Exception;
-    public abstract void addLe(Expr expr1, Expr expr2) throws Exception;
-    
-    public abstract void addEq(Expr expr, double d) throws Exception;
-    public abstract void addEq(Expr expr1, Expr expr2) throws Exception;
-    
-    public abstract void exportModel(String fname) throws Exception;
-
-    public abstract boolean solve() throws Exception;
-
-    public abstract String getStatus() throws Exception;
-
-    public abstract double getObjValue() throws Exception;
-    
-    public abstract double getValue(Var var) throws Exception;
-
-    public abstract double getValue(Expr expr) throws Exception;
-
-    public abstract void delete() throws Exception;
-
-    public abstract void setOut(PrintStream stream) throws Exception;
-
-    public abstract void setWarning(PrintStream stream) throws Exception;
-
-
-
-    
-
-    
-
-    
-    
+    public final void addGe(Expr expr, double d) throws Exception{
+        addGe(expr, constant(d));
+    }
+    public final void addLe(Expr expr, double d) throws Exception{
+        addLe(expr, constant(d));
+    }
+    public final void addEq(Expr expr, double d) throws Exception{
+        addEq(expr, constant(d));
+    }
 }

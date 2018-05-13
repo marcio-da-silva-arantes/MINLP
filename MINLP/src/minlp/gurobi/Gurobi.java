@@ -7,7 +7,6 @@ package minlp.gurobi;
 
 import gurobi.GRB;
 import gurobi.GRBEnv;
-import gurobi.GRBException;
 import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import java.io.PrintStream;
@@ -48,14 +47,20 @@ public class Gurobi extends MINLP{
         map.put(n_cols, var);
         return var;
     }
-     @Override
+    @Override
     public Var boolVar(String name) throws Exception {
         n_cols++;
         GurobiVar var = new GurobiVar(mip.addVar(0, 1, 0.0, GRB.BINARY, name), n_cols, 0, 1, name);
         map.put(n_cols, var);
         return var;
     }
-
+    @Override
+    public Var intVar(int lb, int ub, String name) throws Exception {
+        n_cols++;
+        GurobiVar var = new GurobiVar(mip.addVar(lb, ub, 0.0, GRB.INTEGER, name), n_cols, lb, ub, name);
+        map.put(n_cols, var);
+        return var;
+    }
     @Override
     public Expr constant(double d) throws Exception {
         GRBLinExpr expr = new GRBLinExpr();
@@ -127,40 +132,17 @@ public class Gurobi extends MINLP{
             mip.setObjective(r);
         }
     }
-
-    @Override
-    public void addGe(Expr expr, double d) throws Exception {
-        addRow(expr, GRB.GREATER_EQUAL, d);
-    }
     @Override
     public void addGe(Expr expr1, Expr expr2) throws Exception {
         addRow(expr1, GRB.GREATER_EQUAL, expr2);
-    }
-    
-    @Override
-    public void addLe(Expr expr, double d) throws Exception {
-        addRow(expr, GRB.LESS_EQUAL, d);
     }
     @Override
     public void addLe(Expr expr1, Expr expr2) throws Exception {
         addRow(expr1, GRB.LESS_EQUAL, expr2);
     }
-
-    @Override
-    public void addEq(Expr expr, double d) throws Exception {
-        addRow(expr, GRB.EQUAL, d);
-    }
     @Override
     public void addEq(Expr expr1, Expr expr2) throws Exception {
         addRow(expr1, GRB.EQUAL, expr2);
-    }
-    private void addRow(Expr expr, final char SENSE, double d) throws Exception{
-        n_rows++;
-        if(expr instanceof GurobiExpr){
-            mip.addConstr(((GurobiExpr)expr).expr, SENSE, d, "r"+n_rows);
-        }else{
-            mip.addConstr(((GurobiVar)expr).var, SENSE, d, "r"+n_rows);
-        }
     }
     private void addRow(Expr expr1, final char SENSE, Expr expr2) throws Exception{
         n_rows++;

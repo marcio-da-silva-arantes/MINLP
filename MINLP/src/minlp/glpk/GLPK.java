@@ -65,6 +65,17 @@ public class GLPK extends MINLP{
     }
 
     @Override
+    public Var intVar(int lb, int ub, String name) throws Exception {
+        n_cols++;
+        glp_add_cols(mip, 1);
+        glp_set_col_name(mip, n_cols, name);
+        glp_set_col_kind(mip, n_cols, GLPKConstants.GLP_IV); //BV - Binary Variable
+        glp_set_col_bnds(mip, n_cols, GLPKConstants.GLP_DB, lb, ub);
+        return new GLPKVar(mip, n_cols, lb, ub, name);
+    }
+    
+
+    @Override
     public Expr constant(double lb) throws Exception {
         return new GLPKExpr(lb);
     }
@@ -113,10 +124,11 @@ public class GLPK extends MINLP{
     }
     
     private int rows = 0;
-    @Override
-    public void addGe(Expr expr, double d) throws Exception {
+    
+    
+    private void addGe(Expr expr) throws Exception {
         GLPKExpr expr2 = cast(expr);
-        d -= expr2.constant;
+        double d = -expr2.constant;
         
         rows++;
         int row = rows;
@@ -140,13 +152,32 @@ public class GLPK extends MINLP{
     }
     @Override
     public void addGe(Expr expr1, Expr expr2) throws Exception {
-        addGe(sum(expr1, prod(-1,expr2)), 0);
+        GLPKExpr expr = cast(sum(expr1, prod(-1,expr2))); 
+        double d = -expr.constant;
+        
+        rows++;
+        int row = rows;
+        // Create constraints
+        glp_add_rows(mip, 1);
+        glp_set_row_name(mip, row, "r"+row);
+        glp_set_row_bnds(mip, row, GLPKConstants.GLP_LO, d, 0);
+        
+        SWIGTYPE_p_int ind = new_intArray(expr.size()+1);
+        SWIGTYPE_p_double val = new_doubleArray(expr.size()+1);
+        
+        int i=1;
+        for(Base b : expr.values()){
+            intArray_setitem(ind, i, b.var.col);
+            doubleArray_setitem(val, i, b.coef);
+            i++;
+        }
+        glp_set_mat_row(mip, row, expr.size(), ind, val);
     }
     @Override
-    public void addLe(Expr expr, double d) throws Exception {
-        GLPKExpr expr2 = cast(expr);
+    public void addLe(Expr expr1, Expr expr2) throws Exception {
+        GLPKExpr expr = cast(sum(expr1, prod(-1,expr2))); 
         
-        d -= expr2.constant;
+        double d = -expr.constant;
         
         rows++;
         int row = rows;
@@ -155,59 +186,26 @@ public class GLPK extends MINLP{
         glp_set_row_name(mip, row, "r"+row);
         glp_set_row_bnds(mip, row, GLPKConstants.GLP_UP, 0, d);
         
-        SWIGTYPE_p_int ind = new_intArray(expr2.size()+1);
-        SWIGTYPE_p_double val = new_doubleArray(expr2.size()+1);
+        SWIGTYPE_p_int ind = new_intArray(expr.size()+1);
+        SWIGTYPE_p_double val = new_doubleArray(expr.size()+1);
         
         int i=1;
-        for(Base b : expr2.values()){
+        for(Base b : expr.values()){
             intArray_setitem(ind, i, b.var.col);
             doubleArray_setitem(val, i, b.coef);
             i++;
         }
-        glp_set_mat_row(mip, row, expr2.size(), ind, val);
-        
-        //System.out.println(expr2 + " <= "+d);
-    }
-    @Override
-    public void addLe(Expr expr1, Expr expr2) throws Exception {
-        addLe(sum(expr1, prod(-1,expr2)), 0);
-    }
-    @Override
-    public void addEq(Expr expr, double d) throws Exception {
-        addGe(expr, d);
-        addLe(expr, d);
-//      //There is a memory error in this aproach when using GLPKConstants.GLP_FX or GLPKConstants.GLP_DB
-//        GLPKExpr expr2 = (GLPKExpr) expr;
-//        
-//        rows++;
-//        int row = rows;
-//        // Create constraints
-//        glp_add_rows(lp, 1);
-//        glp_set_row_name(lp, row, "r"+row);
-//        //glp_set_row_bnds(lp, row, GLPKConstants.GLP_FX, d, d);
-//        glp_set_row_bnds(lp, row, GLPKConstants.GLP_DB, d-1e-1, d+1e-1);
-//        
-//        SWIGTYPE_p_int ind = new_intArray(expr2.list.size());
-//        SWIGTYPE_p_double val = new_doubleArray(expr2.list.size());
-//        
-//        int i=1;
-//        for(Base b : expr2.list){
-//            intArray_setitem(ind, i, b.var.col);
-//            doubleArray_setitem(val, i, b.coef);
-//            i++;
-//        }
-//        glp_set_mat_row(lp, row, expr2.list.size(), ind, val);
+        glp_set_mat_row(mip, row, expr.size(), ind, val);
     }
     @Override
     public void addEq(Expr expr1, Expr expr2) throws Exception {
-        addEq(sum(expr1, prod(-1,expr2)), 0);
+        addGe(expr1, expr2);
+        addLe(expr1, expr2);
     }
-
     @Override
     public void exportModel(String fname) throws Exception {
         glp_write_prob(mip, 0, fname);
     }
-
     @Override
     public boolean solve() throws Exception {
         // Solve model
