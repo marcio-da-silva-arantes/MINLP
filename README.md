@@ -13,14 +13,14 @@ This library encode the models using the solvers Cplex and Glpk, so you must ins
 define:
   let x ∈ R
   let y ∈ {0,1}
-  v = cplex.addProd(x,y)  ↔ v = x*y
+  v = x*y           <-- this is non-linear
 logical expected result:
   v = x  if y=1 or
   v = 0  if y=0
 linear transformation:
   let v ∈ R
   M*(y-1) + x ≤ v ≤ x - M*(y-1)
-  -M*y ≤ v ≤ M*y
+  -M*y ≤ v ≤ M*y   
 </pre>
 
 #### General easy encoding
