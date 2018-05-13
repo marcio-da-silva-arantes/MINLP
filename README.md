@@ -1,21 +1,22 @@
 # MINLP
+
+* **Version:** v2.0.1
+* **Date:** 05/05/2018
+
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
-This library encode the models using the solvers Cplex and Glpk, so you must install boths to full to use this library, to install this dependences see:
+This library encode the models using the solvers Cplex and Glpk, so you must install both to use this library, see how to install this dependencies on links below:
 * [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) 
 * [Glpk](http://ftp.gnu.org/gnu/glpk/) 
 
-#### Main idea of how it is done
+#### Main idea of how some simple linear transformations are done by MINLP
 <pre>
 define:
   let x ∈ R
   let y ∈ {0,1}
   v = cplex.addProd(x,y)  ↔ v = x*y
-dedution: 
-  if(y=1){
-    v=x
-  }else{ 
-    v=0 
-  }
+logical expected result:
+  v = x  if y=1 or
+  v = 0  if y=0
 linear transformation:
   let v ∈ R
   M*(y-1) + x ≤ v ≤ x - M*(y-1)
@@ -25,12 +26,12 @@ linear transformation:
 #### General easy encoding
 * <math>&sum;<sub>i&in;I</sub> ( x<sub>i</sub> )</math>
 ```javascript
-	mip.sum(I, i -> x[i])
+	mip.sum(I, (i) -> x[i])
 ```
 
 * <math>&sum;<sub>i&in;I</sub> &sum;<sub>j&in;J</sub> ( C<sub>ij</sub> x<sub>ij</sub> ) </math>
 ```javascript
-	mip.sum(I, i -> mip.sum(J, j -> mip.prod(C[i][j], x[i][j]))) )
+	mip.sum(I, J, (i,j) -> mip.prod(C[i][j], x[i][j]) )
 ```
 
 * <math> x<sub>i</sub> &le; b<sub>i</sub> 	&forall;(i&in;I)</math>
@@ -43,7 +44,7 @@ linear transformation:
 * <math>&sum;<sub>i&in;I</sub> ( A<sub>ji</sub> x<sub>i</sub> ) &ge; B<sub>j</sub>	&forall;(j&in;J)</math>
 ```javascript
 	mip.forAll(J, (j)->{
-		mip.addGe(mip.sum(I, i -> mip.prod(A[j][i], x[i])), B[j]);
+		mip.addGe(mip.sum(I, (i) -> mip.prod(A[j][i], x[i])), B[j]);
 	});
 ```
 
