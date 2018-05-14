@@ -26,8 +26,6 @@ public class Gurobi extends MINLP{
     public final GRBEnv env;
     public final GRBModel mip;
     
-    private int n_cols = 0;
-    private int n_rows = 0;
     public Gurobi() throws Exception {
         this(1e5);
     }
@@ -133,27 +131,27 @@ public class Gurobi extends MINLP{
         }
     }
     @Override
-    public void addGe(Expr expr1, Expr expr2) throws Exception {
-        addRow(expr1, GRB.GREATER_EQUAL, expr2);
+    public void addGe(Expr expr1, Expr expr2, String name) throws Exception {
+        addRow(expr1, GRB.GREATER_EQUAL, expr2, name);
     }
     @Override
-    public void addLe(Expr expr1, Expr expr2) throws Exception {
-        addRow(expr1, GRB.LESS_EQUAL, expr2);
+    public void addLe(Expr expr1, Expr expr2, String name) throws Exception {
+        addRow(expr1, GRB.LESS_EQUAL, expr2, name);
     }
     @Override
-    public void addEq(Expr expr1, Expr expr2) throws Exception {
-        addRow(expr1, GRB.EQUAL, expr2);
+    public void addEq(Expr expr1, Expr expr2, String name) throws Exception {
+        addRow(expr1, GRB.EQUAL, expr2, name);
     }
-    private void addRow(Expr expr1, final char SENSE, Expr expr2) throws Exception{
+    private void addRow(Expr expr1, final char SENSE, Expr expr2, String name) throws Exception{
         n_rows++;
         if(expr1 instanceof GurobiExpr && expr2 instanceof GurobiExpr){
-            mip.addConstr(((GurobiExpr)expr1).expr, SENSE, ((GurobiExpr)expr2).expr, "r"+n_rows);
+            mip.addConstr(((GurobiExpr)expr1).expr, SENSE, ((GurobiExpr)expr2).expr, name);
         }else if(expr1 instanceof GurobiExpr && expr2 instanceof GurobiVar){
-            mip.addConstr(((GurobiExpr)expr1).expr, SENSE, ((GurobiVar)expr2).var, "r"+n_rows);
+            mip.addConstr(((GurobiExpr)expr1).expr, SENSE, ((GurobiVar)expr2).var, name);
         }else if(expr1 instanceof GurobiVar && expr2 instanceof GurobiExpr){
-            mip.addConstr(((GurobiVar)expr1).var, SENSE, ((GurobiExpr)expr2).expr, "r"+n_rows);
+            mip.addConstr(((GurobiVar)expr1).var, SENSE, ((GurobiExpr)expr2).expr, name);
         }else if(expr1 instanceof GurobiVar && expr2 instanceof GurobiVar){
-            mip.addConstr(((GurobiVar)expr1).var, SENSE, ((GurobiVar)expr2).var, "r"+n_rows);
+            mip.addConstr(((GurobiVar)expr1).var, SENSE, ((GurobiVar)expr2).var, name);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }

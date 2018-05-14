@@ -21,7 +21,6 @@ public class CPLEX extends MINLP{
     private final Map<Integer, Var> map;
     
     public final IloCplex mip;
-    private int n_cols = 0;
     public CPLEX() throws Exception {
         this(1e5);
     }
@@ -30,8 +29,6 @@ public class CPLEX extends MINLP{
         mip = new IloCplex();
         map = new TreeMap();
     }
-    
-    
     
     @Override
     public Var numVar(double lb, double ub, String name) throws Exception {
@@ -103,43 +100,43 @@ public class CPLEX extends MINLP{
     }
 
     @Override
-    public void addGe(Expr expr1, Expr expr2) throws Exception {
+    public void addGe(Expr expr1, Expr expr2, String name) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            mip.addGe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
+            mip.addGe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr, name);
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            mip.addGe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
+            mip.addGe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var, name);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            mip.addGe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
+            mip.addGe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr, name);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            mip.addGe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
+            mip.addGe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var, name);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
     }
     @Override
-    public void addLe(Expr expr1, Expr expr2) throws Exception {
+    public void addLe(Expr expr1, Expr expr2, String name) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            mip.addLe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
+            mip.addLe(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr, name);
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            mip.addLe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
+            mip.addLe(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var, name);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            mip.addLe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
+            mip.addLe(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr, name);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            mip.addLe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
+            mip.addLe(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var, name);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
     }
     @Override
-    public void addEq(Expr expr1, Expr expr2) throws Exception {
+    public void addEq(Expr expr1, Expr expr2, String name) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            mip.addEq(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr);
+            mip.addEq(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr, name);
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            mip.addEq(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var);
+            mip.addEq(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var, name);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            mip.addEq(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr);
+            mip.addEq(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr, name);
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            mip.addEq(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var);
+            mip.addEq(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var, name);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }

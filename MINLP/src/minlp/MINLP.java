@@ -28,6 +28,8 @@ public abstract class MINLP {
     /*public MINLP() throws Exception {
         this(1e5);
     }*/
+    protected int n_cols = 0;
+    protected int n_rows = 0;
     public MINLP(double bigM) throws Exception {
         this.M = bigM;
     }
@@ -64,9 +66,9 @@ public abstract class MINLP {
     
     public abstract Expr constant(double lb) throws Exception;
 
-    public abstract void addGe(Expr expr1, Expr expr2) throws Exception;
-    public abstract void addLe(Expr expr1, Expr expr2) throws Exception;
-    public abstract void addEq(Expr expr1, Expr expr2) throws Exception;
+    public abstract void addGe(Expr expr1, Expr expr2, String name) throws Exception;
+    public abstract void addLe(Expr expr1, Expr expr2, String name) throws Exception;
+    public abstract void addEq(Expr expr1, Expr expr2, String name) throws Exception;
     
     public abstract void exportModel(String fname) throws Exception;
 
@@ -455,7 +457,15 @@ public abstract class MINLP {
         return sum(constant(d), sum(array));
     }
 
-    
+    public final void addGe(Expr expr1, Expr expr2) throws Exception{
+        addGe(expr1, expr2, "r"+(n_rows+1));
+    }
+    public final void addLe(Expr expr1, Expr expr2) throws Exception{
+        addLe(expr1, expr2, "r"+(n_rows+1));
+    }
+    public final void addEq(Expr expr1, Expr expr2) throws Exception{
+        addEq(expr1, expr2, "r"+(n_rows+1));
+    }
     public final void addGe(Expr expr, double d) throws Exception{
         addGe(expr, constant(d));
     }
