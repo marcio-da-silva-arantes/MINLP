@@ -34,7 +34,7 @@ public class Set {
     /*public void forAll(Consumer<? super T> action){
         set.stream().forEach(action);
     }*/
-    public void forAll(Consumer action){
+    public void forAll(Consumer action) throws Exception{
         set.stream().forEach((e)->{
             try {
                 action.accept(e);
@@ -43,7 +43,7 @@ public class Set {
             }
         });
     }
-    public Expr sum(final Function mapper){
+    public Expr sum(final Function mapper) throws Exception{
         return set.stream().map((e)->{
             try {
                 return mapper.accept(e);

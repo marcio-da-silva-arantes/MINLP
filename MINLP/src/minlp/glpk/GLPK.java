@@ -93,6 +93,11 @@ public class GLPK extends MINLP{
         return new GLPKExpr(coef, cast(expr));
     }
     @Override
+    public Expr prod(Expr expr1, Expr expr2) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
     public Expr sum(Expr expr1, Expr expr2) throws Exception {
         return new GLPKExpr(cast(expr1), cast(expr2));
     }

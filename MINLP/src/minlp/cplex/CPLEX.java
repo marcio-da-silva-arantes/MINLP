@@ -66,7 +66,20 @@ public class CPLEX extends MINLP{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
     }
-
+    @Override
+    public Expr prod(Expr expr1, Expr expr2) throws Exception {
+        if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
+            return new CPLEXExpr(mip.prod(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr));
+        }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
+            return new CPLEXExpr(mip.prod(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var));
+        }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
+            return new CPLEXExpr(mip.prod(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr));
+        }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
+            return new CPLEXExpr(mip.prod(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var));
+        }else{
+            throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
+        }
+    }
     @Override
     public Expr sum(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){

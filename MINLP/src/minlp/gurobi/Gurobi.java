@@ -80,7 +80,10 @@ public class Gurobi extends MINLP{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
     }
-
+    @Override
+    public Expr prod(Expr expr1, Expr expr2) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     @Override
     public Expr sum(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof GurobiExpr && expr2 instanceof GurobiExpr){

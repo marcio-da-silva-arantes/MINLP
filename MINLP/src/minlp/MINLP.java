@@ -58,6 +58,7 @@ public abstract class MINLP {
 
     
     public abstract Expr prod(double coef, Expr expr) throws Exception;
+    public abstract Expr prod(Expr expr1, Expr expr2) throws Exception;
     
     public abstract Expr sum(Expr expr1, Expr expr2) throws Exception;
     
@@ -269,10 +270,10 @@ public abstract class MINLP {
         return v;
     }
    
-    public final Set range(int n){
+    public final Set range(int n) throws Exception {
         return range(0, n-1);
     }
-    public final Set range(int begin, int end){
+    public final Set range(int begin, int end) throws Exception {
         LinkedList<Integer> list = new LinkedList<>();
         for(int i=begin; i<=end; i++){
             list.addLast(i);
@@ -298,7 +299,7 @@ public abstract class MINLP {
      * @param set set of indexes
      * @param action the action to be performed
      */
-    public void forAll(Set set, Consumer action){
+    public void forAll(Set set, Consumer action) throws Exception {
         set.forAll(action);
     }
     /**
@@ -319,14 +320,14 @@ public abstract class MINLP {
      * @param set set of indexes
      * @param action the action to be performed
      */
-    public void forAll(Set s1, Set s2, Consumer2p action) {
+    public void forAll(Set s1, Set s2, Consumer2p action) throws Exception {
         s1.forAll(i -> 
             s2.forAll(j -> 
                 action.accept(i, j)
             )
         );
     }
-    public void forAll(Set s1, Set s2, Set s3, Consumer3p action) {
+    public void forAll(Set s1, Set s2, Set s3, Consumer3p action) throws Exception {
         s1.forAll(i -> 
             s2.forAll(j -> 
                 s3.forAll(k -> 
@@ -335,7 +336,7 @@ public abstract class MINLP {
             )
         );
     }
-    public void forAll(Set s1, Set s2, Set s3, Set s4, Consumer4p action) {
+    public void forAll(Set s1, Set s2, Set s3, Set s4, Consumer4p action) throws Exception {
         s1.forAll(i -> 
             s2.forAll(j ->
                 s3.forAll(k ->
@@ -346,7 +347,7 @@ public abstract class MINLP {
             )
         );
     }
-    public void forAll(Set s1, Set s2, Set s3, Set s4, Set s5, Consumer5p action) {
+    public void forAll(Set s1, Set s2, Set s3, Set s4, Set s5, Consumer5p action) throws Exception {
         s1.forAll(i -> 
             s2.forAll(j ->
                 s3.forAll(k ->
@@ -372,7 +373,7 @@ public abstract class MINLP {
      * @param mapper
      * @return 
      */
-    public Expr sum(Set set, Function mapper){
+    public Expr sum(Set set, Function mapper) throws Exception {
         return set.sum(mapper);
     }
     /**
@@ -388,7 +389,7 @@ public abstract class MINLP {
      * @param mapper
      * @return 
      */
-    public Expr sum(Set s1, Set s2, Function2p mapper){
+    public Expr sum(Set s1, Set s2, Function2p mapper) throws Exception {
         return 
             s1.sum(i -> 
                 s2.sum(j -> 
@@ -396,7 +397,7 @@ public abstract class MINLP {
                 )
             ); 
     }
-    public Expr sum(Set s1, Set s2, Set s3, Function3p mapper){
+    public Expr sum(Set s1, Set s2, Set s3, Function3p mapper) throws Exception {
         return 
             s1.sum(i -> 
                 s2.sum(j -> 
@@ -406,7 +407,7 @@ public abstract class MINLP {
                 )
             ); 
     }
-    public Expr sum(Set s1, Set s2, Set s3, Set s4, Function4p mapper){
+    public Expr sum(Set s1, Set s2, Set s3, Set s4, Function4p mapper) throws Exception {
         return 
             s1.sum(i -> 
                 s2.sum(j -> 
@@ -418,7 +419,7 @@ public abstract class MINLP {
                 )
             ); 
     }
-    public Expr sum(Set s1, Set s2, Set s3, Set s4, Set s5, Function5p mapper){
+    public Expr sum(Set s1, Set s2, Set s3, Set s4, Set s5, Function5p mapper) throws Exception {
         return 
             s1.sum(i -> 
                 s2.sum(j -> 
@@ -446,11 +447,11 @@ public abstract class MINLP {
      * @param mapper
      * @return 
      */
-    public Expr sum(int start, int end, Function mapper){
+    public Expr sum(int start, int end, Function mapper)  throws Exception {
         return range(start, end).sum(mapper);
     }
     
-    public Expr sum(Expr... array) {
+    public Expr sum(Expr... array)  throws Exception {
         return sum(0, array.length-1, (i)->array[i]);
     }
     public Expr sum(double d, Expr... array) throws Exception {
