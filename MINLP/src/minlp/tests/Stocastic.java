@@ -23,7 +23,12 @@ public class Stocastic {
         
         mip.addMaximize(mip.sum(x1, x2));
         
-        //P(x1>7||x2>8) <= 0.15
+        //r1 = N(x1, s1)
+        //r2 = N(x2, s2)
+        //P(r1>=7||r2>=8) <= 0.15
+        //x1>=7+invGe(d1)
+        //x2>=8+invGe(d2)
+        //d1+d2<=0.15
         //mip.addProbability(mip.sum(x1,x2), 0.15);
         
         mip.exportModel("model.lp");

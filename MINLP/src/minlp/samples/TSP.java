@@ -61,6 +61,9 @@ public class TSP {
                 aux[1] = mip.prod(-1, u[j]);
                 aux[2] = mip.prod(N.size(), x[i][j]);
                 mip.addLe(mip.sum(aux), N.size()-1);
+                //mip.addLe(u[i].minus(u[j]).sumProd(N.size(),x[i][j]), N.size()-1);
+                //u[i] - u[j] + N.size()*x[i][j] <= N.size()-1;
+                //mip.addConstraint("u[i] - u[j] + N*x[i][j] <= N-1", i, j);    //in future
             }
         });
         

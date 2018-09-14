@@ -25,11 +25,16 @@ public abstract class Distribution {
     }
     
     public final void check() throws Exception{
-        double total = Ge(lb);
-        if(Math.abs(total-1)>precision){
-            throw new Exception("This is not a valid distribution, total probability found "+total);
+        double totalGe = Ge(lb);
+        if(Math.abs(totalGe-1)>precision){
+            throw new Exception("This is not a valid distribution, total probability found "+totalGe);
         }
-        System.out.println("Total probability found "+total);
+        double totalLe = Le(ub);
+        if(Math.abs(totalLe-1)>precision){
+            throw new Exception("This is not a valid distribution, total probability found "+totalLe);
+        }
+        System.out.println("Total probability found Ge "+totalGe);
+        System.out.println("Total probability found Le "+totalLe);
     }
     
     public abstract double P(double x) throws Exception;
@@ -65,7 +70,7 @@ public abstract class Distribution {
     private final double invGeRec(double p, double lb, double ub, double tolerance) throws Exception{
         double m = (lb+ub)/2;
         double x = Ge(m);
-        System.out.printf("m = %f -> x = %f\n", m, x);
+        //System.out.printf("m = %f -> x = %f\n", m, x);
         if(Math.abs(ub-lb)<tolerance){
             return m;
         }else if(x>p){
@@ -80,7 +85,7 @@ public abstract class Distribution {
     private final double invLeRec(double p, double lb, double ub, double tolerance) throws Exception{
         double m = (lb+ub)/2;
         double x = Le(m);
-        System.out.printf("m = %f -> x = %f\n", m, x);
+        //System.out.printf("m = %f -> x = %f\n", m, x);
         if(Math.abs(ub-lb)<tolerance){
             return m;
         }else if(x>p){
@@ -89,56 +94,84 @@ public abstract class Distribution {
             return invLeRec(p, m, ub, tolerance);
         }
     }
-    
-    
-    public static void main(String[] args) throws Exception {
-//        Distribution u = new Distribution(-10, 10, 1000) {    //uniform distribution
-//            @Override
-//            public double P(double x) throws Exception {
-//                return 1.0/(ub-lb);
-//            }
-//        };
-        Distribution u = new Distribution(-10, 10, 1000) {  //normal distribution
-            private final double avg = 0.0;
-            private final double std = 1.0;
+    public static Distribution normal(double avg, double std) throws Exception{
+        return normal(avg, std, avg-std*10, avg+std*10, 1000);
+    }
+    public static Distribution normal(final double avg, final double std, double lb, double ub, int discretization) throws Exception{
+        return new Distribution(lb, ub, discretization) {  //normal distribution
             @Override
             public double P(double x) throws Exception {
                 return Math.exp(-Math.pow((x-avg)/std, 2)/2)/(std*Math.sqrt(2*Math.PI));
             }
         };   
-//        Distribution u = new Distribution(-10, 10, 1000) {  //crescente distribution
-//            @Override
-//            public double P(double x) throws Exception {
-//                return (x-lb)*2.0/Math.pow(ub-lb, 2);
-//            }
-//        };
-//        Distribution u = new Distribution(-10, 10, 1000) {  //triangular distribution
-//            private final double center = 0;
-//            @Override
-//            public double P(double x) throws Exception {
-//                if(x<=center){
-//                    return (x-lb)/Math.pow(center-lb, 2);
-//                }else{
-//                    return (ub-x)/Math.pow(ub-center, 2);
-//                }
-//            }
-//        };
-    
-        double x = 3.0;
-        System.out.printf("Probability of %f is %f\n", x, u.P(x));
-        System.out.printf("Probability of be >= %f is %f\n", x, u.Ge(x));
-        System.out.printf("Probability of be <= %f is %f\n", x, u.Le(x));
+    }
+    public static Distribution uniform(double lb, double ub) throws Exception{
+        return uniform(lb, ub, 1000);
+    }
+    public static Distribution uniform(double lb, double ub, int discretization) throws Exception{
+        return new Distribution(lb, ub, discretization) {    //uniform distribution
+            @Override
+            public double P(double x) throws Exception {
+                return 1.0/(ub-lb);
+            }
+        };
+    }
+    public static Distribution growing(double lb, double ub) throws Exception{
+        return growing(lb, ub, 1000);
+    }
+    public static Distribution growing(double lb, double ub, int discretization) throws Exception{
+        return new Distribution(lb, ub, discretization) {  //crescente distribution
+            @Override
+            public double P(double x) throws Exception {
+                return (x-lb)*2.0/Math.pow(ub-lb, 2);
+            }
+        };
+    }
+    public static Distribution triangular(final double center, double lb, double ub) throws Exception{
+        return triangular(center, lb, ub, 1000);
+    }
+    public static Distribution triangular(final double center, double lb, double ub, int discretization) throws Exception{
+        return new Distribution(lb, ub, discretization) {  //triangular distribution
+            @Override
+            public double P(double x) throws Exception {
+                if(x<=center){
+                    return (x-lb)/Math.pow(center-lb, 2);
+                }else{
+                    return (ub-x)/Math.pow(ub-center, 2);
+                }
+            }
+        };
+    }
+    public static void main(String[] args) throws Exception {
+        //Distribution u = uniform(-3, +3);
+        Distribution u = normal(0, 1);
+        //Distribution u = growing(-3, 3);
+        //Distribution u = triangular(0, -3, +3); 
         
         
-        for(double v=-3.0; v<=3.0; v+=0.1){
-            System.out.printf("v = %5.2f | p(x>v) = %8.6f | p(x<v) = %8.6f\n", v, u.Ge(v), u.Le(v));
+        //r = N(x,s); s = 1
+        //P(r>2) <= 0.15
+        //x<=2-invGe(d)
+        //d<=0.15
+        
+        //r1 = N(x1, s1)
+        //r2 = N(x2, s2)
+        //P(r1>=7||r2>=8) <= 0.15
+        //x1>=7+invGe(d1)
+        //x2>=8+invGe(d2)
+        //d1+d2<=0.15
+        //mip.addProbability(mip.sum(x1,x2), 0.15);
+        
+        
+        
+        for(double v=-3.0; v<=3.001; v+=0.1){
+            System.out.printf("v = %5.2f | p(v) = %8.6f |  p(x>v) = %8.6f | p(x<v) = %8.6f\n", v, u.P(v), u.Ge(v), u.Le(v));
         }
         
-        System.out.printf("invGe(%f)=%f\n", 0.022751, u.invGe(0.022751));
-        System.out.printf("invGe(%f)=%f\n", 0.4, u.invGe(0.4));
-        System.out.printf("invGe(%f)=%f\n", 0.5, u.invGe(0.5));
         
-        
-        
+        for(double p=0; p<=1.0001; p+=0.05){
+            System.out.printf("p = %5.2f | i(y>p) = %8.6f | p(y<p) = %8.6f\n", p, u.invGe(p), u.invLe(p));
+        }
+
     }
 }
