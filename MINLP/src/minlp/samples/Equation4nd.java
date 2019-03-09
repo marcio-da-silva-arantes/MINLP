@@ -30,7 +30,7 @@ public class Equation4nd {
      * @throws IloException 
      */
     public static void main(String[] args) throws Exception {
-        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
+        MINLP mip = new CPLEX(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         
         // x in R   / [-10, +10]    using 32 bits of precision
         nlVar var = new nlVar(mip, -3, +8, 32, "x");

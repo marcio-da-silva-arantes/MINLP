@@ -25,7 +25,7 @@ public class Misture {
      * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
-        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
+        MINLP mip = new CPLEX(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         //conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
         Set I = mip.range(3);
         //conjunto dos nutrientes   J = {0, 1}      <->   {Proteina, Calcio}
