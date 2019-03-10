@@ -6,16 +6,17 @@
 package minlp.cplex;
 
 import ilog.concert.IloNumVar;
-import minlp.Var;
+import minlp.MIPVar;
 
 /**
  *
  * @author Marcio
  */
-public class CPLEXVar implements Var{
+public class CPLEXVar extends MIPVar{ 
     protected final IloNumVar var;
     protected final int col;
-    protected CPLEXVar(IloNumVar var, int col) {
+    protected CPLEXVar(CPLEX mip, IloNumVar var, int col) {
+        super(mip);
         this.var = var;
         this.col = col;
     }

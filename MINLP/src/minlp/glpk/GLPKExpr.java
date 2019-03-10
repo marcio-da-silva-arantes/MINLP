@@ -10,12 +10,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import minlp.Expr;
+import minlp.MIPExpr;
 
 /**
  *
  * @author Marcio
  */
-public class GLPKExpr implements Expr{
+public class GLPKExpr extends MIPExpr{
     
     protected class Base{
         protected final double coef;
@@ -28,20 +29,24 @@ public class GLPKExpr implements Expr{
     
     private final Map<Integer, Base> map = new TreeMap<Integer, Base>();
     protected final double constant;
-    protected GLPKExpr(double constant) {
+    protected GLPKExpr(GLPK glpk, double constant) {
+        super(glpk);
         this.constant = constant;
     }
-    protected GLPKExpr(GLPKVar var) {
+    protected GLPKExpr(GLPK glpk, GLPKVar var) {
+        super(glpk);
         mapAdd(1, var);
         this.constant = 0;
     }
-    protected GLPKExpr(double coef, GLPKExpr expr) {
+    protected GLPKExpr(GLPK glpk, double coef, GLPKExpr expr) {
+        super(glpk);
         expr.map.forEach((key, base)->{
             mapAdd(coef*base.coef, base.var);
         });
         this.constant = coef*expr.constant;
     }
-    protected GLPKExpr(GLPKExpr expr1, GLPKExpr expr2) {
+    protected GLPKExpr(GLPK glpk, GLPKExpr expr1, GLPKExpr expr2) {
+        super(glpk);
         expr1.map.forEach((key, base)->{
             mapAdd(base.coef, base.var);
         });

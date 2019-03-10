@@ -19,7 +19,7 @@ import minlp.gurobi.Gurobi;
  */
 public class TSP {
     public static void main(String[] args) throws Exception {
-        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
+        MINLP mip = new CPLEX(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         //conjunto das cidades i, j \in N 
         Set N = mip.range(5);
        
@@ -56,11 +56,22 @@ public class TSP {
         //for all i in N and j in N with i > 0 and j > 0
         mip.forAll(N, N, (i,j)->{
             if(i<N.size()-1 && j<N.size()-1 && i!=j){
+                
+                //u[i] - u[j] + N*x[i][j] <= N-1
                 Expr aux[] = new Expr[3];
                 aux[0] = mip.prod(+1, u[i]);
                 aux[1] = mip.prod(-1, u[j]);
                 aux[2] = mip.prod(N.size(), x[i][j]);
                 mip.addLe(mip.sum(aux), N.size()-1);
+                
+//                u[i].sum(u[j].prod(-1))
+//                    .sum(x[i][j].prod(N.size()))
+//                    .addLe(N.size()-1);
+//                
+//                u[i].sumProd(-1, u[j])
+//                    .sumProd(N.size(), x[i][j])
+//                    .addLe(N.size()-1);
+                
                 //mip.addLe(u[i].minus(u[j]).sumProd(N.size(),x[i][j]), N.size()-1);
                 //u[i] - u[j] + N.size()*x[i][j] <= N.size()-1;
                 //mip.addConstraint("u[i] - u[j] + N*x[i][j] <= N-1", i, j);    //in future

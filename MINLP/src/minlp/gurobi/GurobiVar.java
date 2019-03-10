@@ -7,18 +7,19 @@ package minlp.gurobi;
 
 import gurobi.GRB;
 import gurobi.GRBVar;
-import minlp.Var;
+import minlp.MIPVar;
 
 /**
  *
  * @author Marcio
  */
-public class GurobiVar implements Var{
+public class GurobiVar extends MIPVar{
     protected final GRBVar var;
     protected final int col;
     private double lb, ub;
     private String name;
-    protected GurobiVar(GRBVar var, int col, double lb, double ub, String name) {
+    protected GurobiVar(Gurobi mip, GRBVar var, int col, double lb, double ub, String name) {
+        super(mip);
         this.var = var;
         this.col = col;
         this.lb = lb;

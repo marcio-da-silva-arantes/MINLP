@@ -6,15 +6,16 @@
 package minlp.cplex;
 
 import ilog.concert.IloNumExpr;
-import minlp.Expr;
+import minlp.MIPExpr;
 
 /**
  *
  * @author Marcio
  */
-public class CPLEXExpr implements Expr{
+public class CPLEXExpr extends MIPExpr{
     protected final IloNumExpr expr;
-    protected CPLEXExpr(IloNumExpr expr) {
+    protected CPLEXExpr(CPLEX mip, IloNumExpr expr) {
+        super(mip);
         this.expr = expr;
     }
     @Override

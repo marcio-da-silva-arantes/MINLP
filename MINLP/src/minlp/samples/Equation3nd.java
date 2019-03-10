@@ -18,7 +18,7 @@ import minlp.nlVar;
  */
 public class Equation3nd {
     /**
-     * This code solve a non linear equation like:
+     * This code find the root by solve the non linear equation:
      * let x in R   / [-10, +10] 
      * 
      * subject to:
@@ -30,6 +30,14 @@ public class Equation3nd {
      * @throws IloException 
      */
     public static void main(String[] args) throws Exception {
+        System.out.println("===================================================");
+        System.out.println("This code find the root by solve the non linear equation:");
+        System.out.println("    let x in R   / [-10, +10]");
+        System.out.println("    subject to:");
+        System.out.println("    x^3 - 6x^2 + 11x - 6 = 0");
+        System.out.println("    optimal: x in {1,2,3}");
+        System.out.println("===================================================");
+        
         MINLP mip = new CPLEX(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         
         // x in R   / [-10, +10]    using 32 bits of precision

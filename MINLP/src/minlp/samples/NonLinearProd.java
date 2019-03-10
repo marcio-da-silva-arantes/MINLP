@@ -27,7 +27,7 @@ public class NonLinearProd {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        MINLP mip = new Gurobi(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
+        MINLP mip = new CPLEX(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         
         // x in R   / [-4, +3] 
         Var x = mip.numVar(-4, 3, "x");

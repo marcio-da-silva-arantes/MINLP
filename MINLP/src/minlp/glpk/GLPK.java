@@ -23,7 +23,7 @@ import org.gnu.glpk.glp_smcp;
  * @author Marcio
  */
 public class GLPK extends MINLP{
-    private final glp_prob mip;
+    protected final glp_prob mip;
     
     public GLPK() throws Exception {
         this(1e5);
@@ -50,7 +50,7 @@ public class GLPK extends MINLP{
             glp_set_col_bnds(mip, n_cols, GLPKConstants.GLP_DB, lb, ub);
         }
         //glp_set_col_bnds(mip, n_cols, GLPKConstants.GLP_DB, lb, ub);
-        return new GLPKVar(mip, n_cols, lb, ub, name);
+        return new GLPKVar(this, n_cols, lb, ub, name);
     }
     
     @Override
@@ -60,7 +60,7 @@ public class GLPK extends MINLP{
         glp_set_col_name(mip, n_cols, name);
         glp_set_col_kind(mip, n_cols, GLPKConstants.GLP_IV); //BV - Binary Variable
         glp_set_col_bnds(mip, n_cols, GLPKConstants.GLP_DB, 0, 1);
-        return new GLPKVar(mip, n_cols, 0, 1, name);
+        return new GLPKVar(this, n_cols, 0, 1, name);
     }
 
     @Override
@@ -70,27 +70,27 @@ public class GLPK extends MINLP{
         glp_set_col_name(mip, n_cols, name);
         glp_set_col_kind(mip, n_cols, GLPKConstants.GLP_IV); //BV - Binary Variable
         glp_set_col_bnds(mip, n_cols, GLPKConstants.GLP_DB, lb, ub);
-        return new GLPKVar(mip, n_cols, lb, ub, name);
+        return new GLPKVar(this, n_cols, lb, ub, name);
     }
     
 
     @Override
     public Expr constant(double lb) throws Exception {
-        return new GLPKExpr(lb);
+        return new GLPKExpr(this, lb);
     }
     
     private GLPKExpr cast(Expr expr) throws Exception{
         if(expr instanceof GLPKExpr){
             return (GLPKExpr) expr;
         }else if(expr instanceof GLPKVar){
-            return new GLPKExpr((GLPKVar) expr);
+            return new GLPKExpr(this, (GLPKVar) expr);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
     }
     @Override
     public Expr prod(double coef, Expr expr) throws Exception {
-        return new GLPKExpr(coef, cast(expr));
+        return new GLPKExpr(this, coef, cast(expr));
     }
     @Override
     public Expr prod(Expr expr1, Expr expr2) throws Exception {
@@ -99,7 +99,7 @@ public class GLPK extends MINLP{
     
     @Override
     public Expr sum(Expr expr1, Expr expr2) throws Exception {
-        return new GLPKExpr(cast(expr1), cast(expr2));
+        return new GLPKExpr(this, cast(expr1), cast(expr2));
     }
 
     @Override
@@ -297,6 +297,6 @@ public class GLPK extends MINLP{
     @Override
     public Var getVar(int i) throws Exception {
         i++;
-        return new GLPKVar(mip, i, glp_get_col_lb(mip, i), glp_get_col_ub(mip, i), glp_get_col_name(mip, i));
+        return new GLPKVar(this, i, glp_get_col_lb(mip, i), glp_get_col_ub(mip, i), glp_get_col_name(mip, i));
     }
 }

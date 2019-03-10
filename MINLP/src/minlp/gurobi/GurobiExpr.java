@@ -6,15 +6,16 @@
 package minlp.gurobi;
 
 import gurobi.GRBLinExpr;
-import minlp.Expr;
+import minlp.MIPExpr;
 
 /**
  *
  * @author Marcio
  */
-public class GurobiExpr implements Expr{
+public class GurobiExpr extends MIPExpr{
     protected final GRBLinExpr expr;
-    protected GurobiExpr(GRBLinExpr expr) {
+    protected GurobiExpr(Gurobi mip, GRBLinExpr expr) {
+        super(mip);
         this.expr = expr;
     }
     @Override

@@ -41,21 +41,21 @@ public class Gurobi extends MINLP{
     @Override
     public Var numVar(double lb, double ub, String name) throws Exception {
         n_cols++;
-        GurobiVar var = new GurobiVar(mip.addVar(lb, ub, 0.0, GRB.CONTINUOUS, name), n_cols, lb, ub, name);
+        GurobiVar var = new GurobiVar(this, mip.addVar(lb, ub, 0.0, GRB.CONTINUOUS, name), n_cols, lb, ub, name);
         map.put(n_cols, var);
         return var;
     }
     @Override
     public Var boolVar(String name) throws Exception {
         n_cols++;
-        GurobiVar var = new GurobiVar(mip.addVar(0, 1, 0.0, GRB.BINARY, name), n_cols, 0, 1, name);
+        GurobiVar var = new GurobiVar(this, mip.addVar(0, 1, 0.0, GRB.BINARY, name), n_cols, 0, 1, name);
         map.put(n_cols, var);
         return var;
     }
     @Override
     public Var intVar(int lb, int ub, String name) throws Exception {
         n_cols++;
-        GurobiVar var = new GurobiVar(mip.addVar(lb, ub, 0.0, GRB.INTEGER, name), n_cols, lb, ub, name);
+        GurobiVar var = new GurobiVar(this, mip.addVar(lb, ub, 0.0, GRB.INTEGER, name), n_cols, lb, ub, name);
         map.put(n_cols, var);
         return var;
     }
@@ -63,7 +63,7 @@ public class Gurobi extends MINLP{
     public Expr constant(double d) throws Exception {
         GRBLinExpr expr = new GRBLinExpr();
         expr.addConstant(d);
-        return new GurobiExpr(expr);
+        return new GurobiExpr(this, expr);
     }
     
     @Override
@@ -71,11 +71,11 @@ public class Gurobi extends MINLP{
         if(expr instanceof GurobiExpr){
             GRBLinExpr r = new GRBLinExpr();
             r.multAdd(coef, ((GurobiExpr)expr).expr);
-            return new GurobiExpr(r);
+            return new GurobiExpr(this, r);
         }else if(expr instanceof GurobiVar){
             GRBLinExpr r = new GRBLinExpr();
             r.addTerm(coef, ((GurobiVar)expr).var);
-            return new GurobiExpr(r);
+            return new GurobiExpr(this, r);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -90,22 +90,22 @@ public class Gurobi extends MINLP{
             GRBLinExpr r = new GRBLinExpr();
             r.add(((GurobiExpr)expr1).expr);
             r.add(((GurobiExpr)expr2).expr);
-            return new GurobiExpr(r);
+            return new GurobiExpr(this, r);
         }else if(expr1 instanceof GurobiExpr && expr2 instanceof GurobiVar){
             GRBLinExpr r = new GRBLinExpr();
             r.add(((GurobiExpr)expr1).expr);
             r.addTerm(1, ((GurobiVar)expr2).var);
-            return new GurobiExpr(r);
+            return new GurobiExpr(this, r);
         }else if(expr1 instanceof GurobiVar && expr2 instanceof GurobiExpr){
             GRBLinExpr r = new GRBLinExpr();
             r.addTerm(1, ((GurobiVar)expr1).var);
             r.add(((GurobiExpr)expr2).expr);
-            return new GurobiExpr(r);
+            return new GurobiExpr(this, r);
         }else if(expr1 instanceof GurobiVar && expr2 instanceof GurobiVar){
             GRBLinExpr r = new GRBLinExpr();
             r.addTerm(1, ((GurobiVar)expr1).var);
             r.addTerm(1, ((GurobiVar)expr2).var);
-            return new GurobiExpr(r);
+            return new GurobiExpr(this, r);
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }

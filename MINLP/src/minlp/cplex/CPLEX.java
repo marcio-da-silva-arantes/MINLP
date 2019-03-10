@@ -33,35 +33,35 @@ public class CPLEX extends MINLP{
     @Override
     public Var numVar(double lb, double ub, String name) throws Exception {
         n_cols++;
-        CPLEXVar var = new CPLEXVar(mip.numVar(lb, ub, name), n_cols);
+        CPLEXVar var = new CPLEXVar(this, mip.numVar(lb, ub, name), n_cols);
         map.put(n_cols, var);
         return var;
     }
      @Override
     public Var boolVar(String name) throws Exception {
         n_cols++;
-        CPLEXVar var = new CPLEXVar(mip.boolVar(name), n_cols);
+        CPLEXVar var = new CPLEXVar(this, mip.boolVar(name), n_cols);
         map.put(n_cols, var);
         return var;
     }
     @Override
     public Var intVar(int lb, int ub, String name) throws Exception {
         n_cols++;
-        CPLEXVar var = new CPLEXVar(mip.intVar(lb, ub, name), n_cols);
+        CPLEXVar var = new CPLEXVar(this, mip.intVar(lb, ub, name), n_cols);
         map.put(n_cols, var);
         return var;
     }
     @Override
     public Expr constant(double d) throws Exception {
-        return new CPLEXExpr(mip.constant(d));
+        return new CPLEXExpr(this, mip.constant(d));
     }
     
     @Override
     public Expr prod(double coef, Expr expr) throws Exception {
         if(expr instanceof CPLEXExpr){
-            return new CPLEXExpr(mip.prod(coef, ((CPLEXExpr)expr).expr));
+            return new CPLEXExpr(this, mip.prod(coef, ((CPLEXExpr)expr).expr));
         }else if(expr instanceof CPLEXVar){
-            return new CPLEXExpr(mip.prod(coef, ((CPLEXVar)expr).var));
+            return new CPLEXExpr(this, mip.prod(coef, ((CPLEXVar)expr).var));
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -69,13 +69,13 @@ public class CPLEX extends MINLP{
     @Override
     public Expr prod(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            return new CPLEXExpr(mip.prod(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr));
+            return new CPLEXExpr(this, mip.prod(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr));
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            return new CPLEXExpr(mip.prod(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var));
+            return new CPLEXExpr(this, mip.prod(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var));
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            return new CPLEXExpr(mip.prod(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr));
+            return new CPLEXExpr(this, mip.prod(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr));
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            return new CPLEXExpr(mip.prod(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var));
+            return new CPLEXExpr(this, mip.prod(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var));
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
@@ -83,13 +83,13 @@ public class CPLEX extends MINLP{
     @Override
     public Expr sum(Expr expr1, Expr expr2) throws Exception {
         if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXExpr){
-            return new CPLEXExpr(mip.sum(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr));
+            return new CPLEXExpr(this, mip.sum(((CPLEXExpr)expr1).expr, ((CPLEXExpr)expr2).expr));
         }else if(expr1 instanceof CPLEXExpr && expr2 instanceof CPLEXVar){
-            return new CPLEXExpr(mip.sum(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var));
+            return new CPLEXExpr(this, mip.sum(((CPLEXExpr)expr1).expr, ((CPLEXVar)expr2).var));
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXExpr){
-            return new CPLEXExpr(mip.sum(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr));
+            return new CPLEXExpr(this, mip.sum(((CPLEXVar)expr1).var, ((CPLEXExpr)expr2).expr));
         }else if(expr1 instanceof CPLEXVar && expr2 instanceof CPLEXVar){
-            return new CPLEXExpr(mip.sum(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var));
+            return new CPLEXExpr(this, mip.sum(((CPLEXVar)expr1).var, ((CPLEXVar)expr2).var));
         }else{
             throw new Exception("Invalid expression type"); //To change body of generated methods, choose Tools | Templates.
         }
