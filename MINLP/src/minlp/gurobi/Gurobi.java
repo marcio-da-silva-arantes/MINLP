@@ -35,7 +35,10 @@ public class Gurobi extends MINLP{
         mip = new GRBModel(env);
         map = new TreeMap();
     }
-    
+    @Override
+    public void setTimeLimit(double timeLimit) throws Exception {
+        mip.set(GRB.DoubleParam.TimeLimit, timeLimit);
+    }
     
     
     @Override
@@ -204,6 +207,18 @@ public class Gurobi extends MINLP{
         env.dispose();
     }
 
+    /**
+     * This method on Gurobi solver only will be used to enable/disable the output:<br>
+     * <pre>
+     * if(stream==null){
+     *      setting output off
+     * }else{
+     *      setting output on
+     * }
+     * </pre>
+     * @param stream
+     * @throws Exception 
+     */
     @Override
     public void setOut(PrintStream stream) throws Exception {
         System.err.println("MINLP warning: setOut on Gurobi solver only will be used to enable/disable the output:");
@@ -216,9 +231,14 @@ public class Gurobi extends MINLP{
         }
     }
 
+    /**
+     * setWarning is not suported with Gurobi solver, nothing will change
+     * @param stream
+     * @throws Exception 
+     */
     @Override
     public void setWarning(PrintStream stream) throws Exception {
-        System.err.println("MINLP warning: setWarning is not suported with Gurobi solver");
+        System.err.println("MINLP warning: setWarning is not suported with Gurobi solver, nothing will change");
     }
     @Override
     public int getNcols() throws Exception {

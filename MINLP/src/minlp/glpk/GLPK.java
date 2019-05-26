@@ -12,6 +12,7 @@ import minlp.Var;
 import minlp.glpk.GLPKExpr.Base;
 import static org.gnu.glpk.GLPK.*;
 import org.gnu.glpk.GLPKConstants;
+import static org.gnu.glpk.GLPKConstants.GLP_ON;
 import org.gnu.glpk.SWIGTYPE_p_double;
 import org.gnu.glpk.SWIGTYPE_p_int;
 import org.gnu.glpk.glp_iocp;
@@ -24,6 +25,9 @@ import org.gnu.glpk.glp_smcp;
  */
 public class GLPK extends MINLP{
     protected final glp_prob mip;
+    private final glp_smcp parm_smcp;
+    private final glp_iocp parm_iocp;
+    private boolean isLP = true; //if has any integer or binary variable this will change to false
     
     public GLPK() throws Exception {
         this(1e5);
@@ -31,8 +35,15 @@ public class GLPK extends MINLP{
     public GLPK(double bigM) throws Exception {
         super(bigM);
         mip = glp_create_prob();
+        parm_smcp = new glp_smcp();
+        parm_iocp = new glp_iocp();
     }
-    
+    @Override
+    public void setTimeLimit(double timeLimit) throws Exception {
+        parm_smcp.setTm_lim((int)timeLimit);
+        parm_iocp.setTm_lim((int)timeLimit);
+        //mip.set(GRB.DoubleParam.TimeLimit, timeLimit);
+    }
     
     @Override
     public Var numVar(double lb, double ub, String name) throws Exception {
@@ -55,16 +66,18 @@ public class GLPK extends MINLP{
     
     @Override
     public Var boolVar(String name) throws Exception {
+        isLP = false;
         n_cols++;
         glp_add_cols(mip, 1);
         glp_set_col_name(mip, n_cols, name);
-        glp_set_col_kind(mip, n_cols, GLPKConstants.GLP_IV); //BV - Binary Variable
+        glp_set_col_kind(mip, n_cols, GLPKConstants.GLP_BV); //BV - Binary Variable
         glp_set_col_bnds(mip, n_cols, GLPKConstants.GLP_DB, 0, 1);
         return new GLPKVar(this, n_cols, 0, 1, name);
     }
 
     @Override
     public Var intVar(int lb, int ub, String name) throws Exception {
+        isLP = false;
         n_cols++;
         glp_add_cols(mip, 1);
         glp_set_col_name(mip, n_cols, name);
@@ -183,15 +196,32 @@ public class GLPK extends MINLP{
     }
     @Override
     public boolean solve() throws Exception {
+        if(isLP){
+            
+            //parm.setTm_lim(GLP_UP);
+            glp_init_smcp(parm_smcp);
+            return glp_simplex(mip, parm_smcp) == 0; //using simplex solver
+        }else{
+            //glp_iocp parm = new glp_iocp();
+            glp_init_iocp(parm_iocp);
+            parm_iocp.setPresolve(GLP_ON);
+            return glp_intopt(mip, parm_iocp) == 0;  //using mip solver
+        }
         // Solve model
         
 //        glp_smcp parm = new glp_smcp();
 //        glp_init_smcp(parm);
 //        int ret = glp_exact(mip, parm);
 //        
+        /*
         glp_smcp parm = new glp_smcp();
         glp_init_smcp(parm);
         int ret = glp_simplex(mip, parm);
+        */
+//        glp_iocp parm = new glp_iocp();
+//        glp_init_iocp(parm);
+//        parm.setPresolve(GLP_ON);
+//        int ret = glp_intopt(mip, parm);
 
 //        glp_smcp parm = new glp_smcp();
 //        glp_init_smcp(parm);
@@ -201,15 +231,15 @@ public class GLPK extends MINLP{
 //        glp_init_iocp(iocp);
 //        iocp.setPresolve(GLPKConstants.GLP_ON);
 //        int ret = glp_intopt(mip, iocp);
-
-        return ret==0;
+//
+//        return ret==0;
     }
 
     
     
     @Override
     public String getStatus() throws Exception {
-        int status = glp_get_status(mip);
+        int status = isLP ? glp_get_status(mip) : glp_mip_status(mip);
         /*
         GLP_OPT - solution is optimal; 
         GLP_FEAS - solution is feasible; 
@@ -236,18 +266,19 @@ public class GLPK extends MINLP{
 
     @Override
     public double getObjValue() throws Exception {
-        return glp_get_obj_val(mip);
+        return isLP ? glp_get_obj_val(mip) : glp_mip_obj_val(mip);
+        //return glp_get_obj_val(mip);
     }
 
     @Override
     public double getValue(Var x) throws Exception {
         GLPKVar x2 = (GLPKVar) x;
-        return glp_get_col_prim(mip, x2.col);
+        return isLP ? glp_get_col_prim(mip, x2.col) : glp_mip_col_val(mip, x2.col);
     }
     @Override
     public double getValue(Expr expr) throws Exception {
         GLPKExpr glpk_expr = ((GLPKExpr) expr);
-        return glpk_expr.values().stream().map((b)->glp_get_col_prim(mip, b.var.col)).reduce(glpk_expr.constant, Double::sum);
+        return glpk_expr.values().stream().map((b)->isLP ? glp_get_col_prim(mip, b.var.col) : glp_mip_col_val(mip, b.var.col) ).reduce(glpk_expr.constant, Double::sum);
     }
 
 
@@ -256,7 +287,18 @@ public class GLPK extends MINLP{
         glp_delete_prob(mip);
     }
     
-
+    /**
+     * This method on GPLK solver only will be used to enable/disable the output:<br>
+     * <pre>
+     * if(stream==null){
+     *      setting output off
+     * }else{
+     *      setting output on
+     * }
+     * </pre>
+     * @param stream
+     * @throws Exception 
+     */
     @Override
     public void setOut(PrintStream stream) throws Exception {
         System.err.println("MINLP warning: setOut on GLPK solver only will be used to enable/disable the output:");
@@ -269,9 +311,14 @@ public class GLPK extends MINLP{
         }
     }
 
+    /**
+     * setWarning is not suported with GLPK solver, nothing will change
+     * @param stream
+     * @throws Exception 
+     */
     @Override
     public void setWarning(PrintStream stream) throws Exception {
-        System.err.println("MINLP warning: setWarning is not suported with GLPK solver");
+        System.err.println("MINLP warning: setWarning is not suported with GLPK solver, nothing will change");
     }
 
     @Override

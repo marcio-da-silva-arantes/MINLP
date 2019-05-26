@@ -29,4 +29,6 @@ public interface Expr {
     public void addGe(double constant) throws Exception;
     public void addLe(double constant) throws Exception;
     public void addEq(double constant) throws Exception;
+    
+    public double value() throws Exception;
 }

@@ -14,7 +14,8 @@ import minlp.MINLP;
 import minlp.Var;
 
 /**
- *
+ * CPLEX is the class used to create and solve a large variety of Mathematical Programming models.
+ * @see ilog.cplex.IloCplex
  * @author Marcio
  */
 public class CPLEX extends MINLP{
@@ -28,6 +29,11 @@ public class CPLEX extends MINLP{
         super(bigM);
         mip = new IloCplex();
         map = new TreeMap();
+    }
+
+    @Override
+    public void setTimeLimit(double timeLimit) throws Exception {
+        mip.setParam(IloCplex.DoubleParam.TimeLimit, timeLimit);
     }
     
     @Override
@@ -189,11 +195,22 @@ public class CPLEX extends MINLP{
         mip.end();
     }
 
+    /**
+     * Sets the default output stream of the invoking IloCplex object.
+     * After this call, all logging output will be output via the new stream. Passing null as the new output stream will turn off all logging output.
+     * @param stream    The new default output stream.
+     * @throws Exception 
+     */
     @Override
     public void setOut(PrintStream stream) throws Exception {
         mip.setOut(stream);
     }
 
+    /**
+     * Sets the warning stream of the invoking IloCplex object. After this call, all warnings will be output via the new stream. Passing null as the new output stream will turn off all warnings.
+     * @param stream
+     * @throws Exception 
+     */
     @Override
     public void setWarning(PrintStream stream) throws Exception {
         mip.setWarning(stream);

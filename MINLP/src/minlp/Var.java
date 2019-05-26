@@ -23,4 +23,9 @@ public interface Var extends Expr{
     public String getName() throws Exception;
 
     public void setName(String name) throws Exception;
+    
+    public double value() throws Exception;
+
+    public void fix(double value) throws Exception;
+
 }

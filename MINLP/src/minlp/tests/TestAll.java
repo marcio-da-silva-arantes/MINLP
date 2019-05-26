@@ -5,11 +5,11 @@
  */
 package minlp.tests;
 
-import minlp.samples.Equation3nd;
-import minlp.samples.Equation4nd;
-import minlp.samples.Misture;
-import minlp.samples.NonLinearProd;
-import minlp.samples.TSP;
+import minlp.samples.non_linear.Equation3nd;
+import minlp.samples.non_linear.Equation4nd;
+import minlp.samples.basic.Misture;
+import minlp.samples.non_linear.NonLinearProd;
+import minlp.samples.medium.TSP;
 
 /**
  *

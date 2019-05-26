@@ -85,4 +85,10 @@ public class MIPExpr implements Expr{
     public void addEq(double constant) throws Exception {
         mip.addEq(this, constant);
     }
+
+    @Override
+    public double value() throws Exception {
+        return mip.getValue(this);
+    }
+    
 }

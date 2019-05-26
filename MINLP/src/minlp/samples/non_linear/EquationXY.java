@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package minlp.samples;
+package minlp.samples.non_linear;
 
 import minlp.Expr;
 import minlp.MINLP;

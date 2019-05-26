@@ -17,6 +17,21 @@ public class nlVar {
     private final double lb, precision;
     private final String name;
     
+    /**
+     * <pre>
+     * create and represent a continuous variable 
+     * as a array of bits y<sub>i</sub> with point fix notation:
+     * x = lb + (ub-lb)*sum<sub>i</sub>(y<sub>i</sub>*2<sup>i</sup>)/(2<sup>N</sup>-1)
+     * where x \in [lb, ub], N is the 
+     * number of bits used and y<sub>i</sub> \in {0,1}
+     * </pre>
+     * @param mip
+     * @param lb
+     * @param ub
+     * @param nBits
+     * @param name
+     * @throws Exception 
+     */
     public nlVar(MINLP mip, double lb, double ub, int nBits, String name) throws Exception {
         if(nBits<1 || nBits>60){
             throw new Exception("Out of bound, number of bits must be between 1 and 60");

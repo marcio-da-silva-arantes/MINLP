@@ -1,7 +1,7 @@
 # MINLP
 
-* **Version:** [v2.1.2](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
-* **Date:** 13/05/2018
+* **Version:** [v2.2.0](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
+* **Date:** 16/03/2019
 
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
 This library encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
@@ -55,9 +55,9 @@ linear transformation:
 ```javascript
 MINLP mip = new CPLEX();   //to diferent solvers use: CPLEX or Gurobi or GLPK;
         
-//conjunto dos ingredientes I = {0, 1, 2}   <->   {Osso, Soja, Peixe}
+//set of ingredients I = {0, 1, 2}   <->   {bone meal, soy flour, fish's flour}
 Set I = mip.range(3);
-//conjunto dos nutrientes   J = {0, 1}      <->   {Proteina, Calcio}
+//set of nutrients   J = {0, 1}      <->   {protein, calcium}
 Set J = mip.range(2);
 
 //Ci : cost per kg of ingredient i

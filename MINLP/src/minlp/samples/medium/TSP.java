@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package minlp.samples;
+package minlp.samples.medium;
 
 import minlp.Expr;
 import minlp.MINLP;
@@ -19,7 +19,7 @@ import minlp.gurobi.Gurobi;
  */
 public class TSP {
     public static void main(String[] args) throws Exception {
-        MINLP mip = new CPLEX(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
+        MINLP mip = new GLPK(); //to diferent solvers use: CPLEX or Gurobi or GLPK;
         //conjunto das cidades i, j \in N 
         Set N = mip.range(5);
        
@@ -63,6 +63,7 @@ public class TSP {
                 aux[1] = mip.prod(-1, u[j]);
                 aux[2] = mip.prod(N.size(), x[i][j]);
                 mip.addLe(mip.sum(aux), N.size()-1);
+                
                 
 //                u[i].sum(u[j].prod(-1))
 //                    .sum(x[i][j].prod(N.size()))

@@ -13,4 +13,13 @@ public abstract class MIPVar extends MIPExpr implements Var{
     protected MIPVar(MINLP mip) {
         super(mip);
     }
+    @Override
+    public double value() throws Exception {
+        return mip.getValue(this);
+    }
+    @Override
+    public void fix(double value) throws Exception {
+        this.setLB(value);
+        this.setUB(value);
+    }
 }
