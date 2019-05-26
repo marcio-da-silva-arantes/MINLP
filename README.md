@@ -1,7 +1,7 @@
 # MINLP
 
-* **Version:** [v2.2.0](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
-* **Date:** 16/03/2019
+* **Version:** [v2.3.0](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
+* **Date:** 26/05/2019
 
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
 This library encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
@@ -71,7 +71,7 @@ double A[][] = {
 double B[] = {0.3, 0.5};
 
 //xi >= 0
-Var x[] = mip.numVarArray(I, 0, Double.POSITIVE_INFINITY, "x");
+Var x[] = mip.numVarArray(I, "x");
 
 //obj = sum_i{Ci * xi}
 Expr obj = mip.sum(I, i -> mip.prod(C[i],x[i]));
