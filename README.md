@@ -100,3 +100,8 @@ if(mip.solve()){
 }
 ```
 
+For more samples see Java classes below:
+* [Basic](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/basic) basic and started samples for LP, IP and MILP problemas commons on literature
+* [Medium](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/medium) a little more complex samples
+* [Non-Linear](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/non_linear) non-linear samples using MINLP, this is unique and show how MINLP can use linear transformations to solve some types of non linear constraints and functions.
+* [Specific](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/specific) some specific problems, stochastic programming, nonlinear global optimization functions, and so on.
