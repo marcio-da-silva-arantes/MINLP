@@ -5,9 +5,9 @@
 
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
 This library encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
-* [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) 
-* [Glpk](http://ftp.gnu.org/gnu/glpk/)
-* [Gurobi](http://www.gurobi.com/)
+* [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) (proprietary)
+* [Glpk](https://www.gnu.org/software/glpk/)(free)
+* [Gurobi](http://www.gurobi.com/)(proprietary)
 
 #### Main idea of how some simple linear transformations are done by MINLP
 <pre>
