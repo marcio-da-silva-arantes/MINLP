@@ -3,7 +3,7 @@
 * **Version:** [v2.3.3](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
 * **Date:** 26/05/2019
 
-Imagine that, a easy way to solve the non-linear problem below, all this using standard linear programming solvers.
+Imagine that, a easy way to solve the non-linear problems like below, all this using standard linear programming solvers.
 <pre>
 <a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" title="\begin{matrix} minimize & x^7 - 7x^3 + 3^2 - \sqrt{2x+1}\\ subject\ to & x \in [0, 2] \end{matrix}" /></a>
 </pre>
