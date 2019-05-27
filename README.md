@@ -5,15 +5,7 @@
 
 Imagine that, solve the non-linear problem below:
 
-<math>minimize x<sup>7</sup> - 7*x<sup>3</sup> + 3*x<sup>2</sup> - &radic;<span style="text-decoration: overline">2x+1</span></math>
-
-<math>subject to: 2&ge;x&ge;0</math>
-
-<span style="white-space: nowrap; font-size:larger">
-&radic;<span style="text-decoration:overline;">&nbsp;X + 1&nbsp;</span>
-</span>
-
-\frac{\frac{x}{1}}{x - y}
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" title="\begin{matrix} minimize & x^7 - 7x^3 + 3^2 - \sqrt{2x+1}\\ subject\ to & x \in [0, 2] \end{matrix}" /></a>
 
 All this using standard mixed integer linear programming solvers. MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way.
 
