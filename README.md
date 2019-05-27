@@ -9,11 +9,10 @@ Imagine that, solve the non-linear problem below:
 
 <math>subject to: 2&ge;x&ge;0</math>
 
-<math>
 <span style="white-space: nowrap; font-size:larger">
 &radic;<span style="text-decoration:overline;">&nbsp;X + 1&nbsp;</span>
 </span>
-</math>
+
 
 All this using standard mixed integer linear programming solvers. MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way.
 
