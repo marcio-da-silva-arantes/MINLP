@@ -3,6 +3,13 @@
 * **Version:** [v2.3.3](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
 * **Date:** 26/05/2019
 
+Imagine that, solve the non-linear problem below:
+
+<math>minimize x<sup>7</sup> - 7*x<sup>3</sup> + 3*x<sup>2</sup> - &radic;(2x+1)</math>
+<math>subject to: 2&ge;x&ge;0</math>
+
+All this using standard mixed integer linear programming solvers. MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way.
+
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
 This library encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
 * [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) (proprietary)
