@@ -13,6 +13,7 @@ Imagine that, solve the non-linear problem below:
 &radic;<span style="text-decoration:overline;">&nbsp;X + 1&nbsp;</span>
 </span>
 
+\frac{\frac{x}{1}}{x - y}
 
 All this using standard mixed integer linear programming solvers. MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way.
 
