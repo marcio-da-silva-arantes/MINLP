@@ -5,7 +5,8 @@
 
 Imagine that, solve the non-linear problem below:
 
-<math>minimize x<sup>7</sup> - 7*x<sup>3</sup> + 3*x<sup>2</sup> - &radic;(2x+1)</math>
+<math>minimize x<sup>7</sup> - 7*x<sup>3</sup> + 3*x<sup>2</sup> - &radic;<span style="text-decoration: overline">2x+1</span></math>
+
 <math>subject to: 2&ge;x&ge;0</math>
 
 All this using standard mixed integer linear programming solvers. MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way.
