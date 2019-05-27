@@ -9,6 +9,26 @@ Imagine that, solve the non-linear problem below:
 
 <math>subject to: 2&ge;x&ge;0</math>
 
+<math display='block'>
+  <mrow>
+    <mi>x</mi><mo>=</mo>
+      <mfrac>
+        <!-- Start Numerator -->
+        <mrow><mo>&#x2212;</mo><mi>b</mi><mo>&#x00B1;</mo>
+          <msqrt>
+            <mrow>
+              <msup><mi>b</mi><mn>2</mn></msup><mo>&#x2212;</mo><mn>4</mn><mi>a</mi><mi>c</mi>
+            </mrow>
+          </msqrt>
+        </mrow>
+        <!-- Start Denominator -->
+        <mrow>
+          <mn>2</mn><mi>a</mi>
+        </mrow>
+      </mfrac>
+  </mrow>
+</math>
+
 All this using standard mixed integer linear programming solvers. MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way.
 
 MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
