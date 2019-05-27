@@ -3,11 +3,16 @@
 * **Version:** [v2.3.3](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
 * **Date:** 26/05/2019
 
-MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
+Imagine that, a easy way to solve the non-linear problems like below, all this using standard linear programming solvers.
+<pre>
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" title="\begin{matrix} minimize & x^7 - 7x^3 + 3^2 - \sqrt{2x+1}\\ subject\ to & x \in [0, 2] \end{matrix}" /></a>
+</pre>
+
+The MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way. MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
 This library encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
 * [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) (proprietary)
-* [Glpk](http://ftp.gnu.org/gnu/glpk/)	(free)
-* [Gurobi](http://www.gurobi.com/)	(proprietary)
+* [Glpk](https://www.gnu.org/software/glpk/) (free)
+* [Gurobi](http://www.gurobi.com/) (proprietary)
 
 #### Main idea of how some simple linear transformations are done by MINLP
 <pre>
@@ -100,3 +105,8 @@ if(mip.solve()){
 }
 ```
 
+For more samples see Java classes below:
+* [Basic](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/basic) basic and started samples for LP, IP and MILP problemas commons on literature
+* [Medium](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/medium) a little more complex samples
+* [Non-Linear](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/non_linear) non-linear samples using MINLP, this is unique and show how MINLP can use linear transformations to solve some types of non linear constraints and functions.
+* [Specific](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/specific) some specific problems, stochastic programming, nonlinear global optimization functions, and so on.
