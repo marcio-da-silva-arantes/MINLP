@@ -15,13 +15,13 @@ The MINLP proposes make linear transformations to solve this for you, and create
 	1. Create a new Java project using some IDE (I suggest to use [NetBeans 8.2](https://netbeans.org/downloads/8.2/))
 	2. Download and import [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar) in your project.
 	3. Download and install one of the solvers supported, them import the java (.jar) lib in your project.
-	4. Make your on models, see the [samples](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/basic) on MINLP
+	4. Make your on models, see the [samples](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples) on MINLP
 	
 * **For Developers:**
 	1. Download or clone this repository
 	2. Open this project using [NetBeans 8.2](https://netbeans.org/downloads/8.2/) IDE
 	3. Download and install one of the solvers supported, them import the java (.jar) lib in your project.
-	4. Make all modifications you need, code new [samples](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples/basic), be happy.
+	4. Make all modifications you need, code new [samples](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples), be happy.
 	
 * **Updates to new versions:**
 	1. If you already has MINLP you can easy donwload the last version here [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar) and replace it on your project.
