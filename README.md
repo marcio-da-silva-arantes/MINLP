@@ -14,7 +14,7 @@ The MINLP proposes make linear transformations to solve this for you, and create
 * **Frist time:** 
 	1. Create a new Java project using some IDE (I suggest to use [NetBeans 8.2](https://netbeans.org/downloads/8.2/))
 	2. Download and import [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar) in your project.
-	3. Download and install one of the solvers supported, them import the java (.jar) lib in your project.
+	3. Download and install one of the solvers supported, them import the java (.jar) lib in your project (I suggest [Glpk](https://www.gnu.org/software/glpk/) ).
 	4. Make your on models, see the [samples](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples) on MINLP
 	
 * **For Developers:**
