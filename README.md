@@ -31,7 +31,7 @@ MINLP is a library thats encode the models using the folowing suported solvers C
 * [Glpk](https://www.gnu.org/software/glpk/) (free)
 	* [Windows](http://winglpk.sourceforge.net/)
 	* [Linux](https://www.gnu.org/software/glpk/)
-* [Gurobi](htt]p://www.gurobi.com/) (proprietary)
+* [Gurobi](http://www.gurobi.com/) (proprietary)
 
 #### Main idea of how some simple linear transformations are done by MINLP
 <pre>
