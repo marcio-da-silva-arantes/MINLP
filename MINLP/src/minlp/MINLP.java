@@ -62,12 +62,14 @@ import minlp.stream.Function5p;
  * @author Marcio
  */
 public abstract class MINLP {
-    private final double M;    //big M
+    private final double bigM;    //big M
+    private final double epsilon;// = 1e-4;
 
     protected int n_cols = 0;
     protected int n_rows = 0;
-    public MINLP(double bigM) throws Exception {
-        this.M = bigM;
+    public MINLP(double bigM, double epsilon) throws Exception {
+        this.bigM = bigM;
+        this.epsilon = epsilon;
     }
 
     /**
@@ -782,13 +784,13 @@ public abstract class MINLP {
         }
         Var v = numVar(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, name);
         //v <= x - M(y-1)
-        addLe(v, sum(expr,prod(-M,sum(-1, y))));
+        addLe(v, sum(expr,prod(-bigM,sum(-1, y))));
         //v >= x + M(y-1)
-        addGe(v, sum(expr,prod(+M,sum(-1, y))));
+        addGe(v, sum(expr,prod(+bigM,sum(-1, y))));
         //v <= +M*y
-        addLe(v, prod(+M,y));
+        addLe(v, prod(+bigM,y));
         //v >= -M*y
-        addGe(v, prod(-M,y));
+        addGe(v, prod(-bigM,y));
         return v;
     }
     /**
@@ -1315,4 +1317,514 @@ public abstract class MINLP {
             var[i].fix(values[i]);
         }
     }
+    /**
+     * Create and return a expression thats represent the <b>not</b> logic operation of a binary expression 
+     * @param P a binary expression
+     * @return not P, this is equivalent to 1-P
+     * @throws Exception 
+     */
+    public final Expr not(Expr P) throws Exception {
+        return sum(1, prod(-1, P));
+    }
+    
+    public final Var and(Expr P1, Expr P2) throws Exception {
+        return and(null, P1, P2);
+    }
+    public final Var or(Expr P1, Expr P2) throws Exception {
+        return or(null, P1, P2);
+    }
+    public final Var xor(Expr P1, Expr P2) throws Exception {
+        return xor(null, P1, P2);
+    }
+    public final Var if_then(Expr P1, Expr P2) throws Exception {
+        return if_then(null, P1, P2);
+    }
+    public final Var if_only(Expr P1, Expr P2) throws Exception {
+        return if_only(null, P1, P2);
+    }
+    public final Var and(String name, Expr P1, Expr P2) throws Exception {
+        Var y = numVar(0.0, 1.0, name);
+        addAnd(name, y, P1, P2);
+        return y;
+    }
+    public final Var or(String name, Expr P1, Expr P2) throws Exception {
+        Var y = numVar(0.0, 1.0, name);
+        addOr(name, y, P1, P2);
+        return y;
+    }
+    public final Var xor(String name, Expr P1, Expr P2) throws Exception {
+        Var y = numVar(0.0, 1.0, name);
+        addXOr(name, y, P1, P2);
+        return y;
+    }
+    public final Var if_then(String name, Expr P1, Expr P2) throws Exception {
+        Var y = numVar(0.0, 1.0, name);
+        addIF_Then(name, y, P1, P2);
+        return y;
+    }
+    public final Var if_only(String name, Expr P1, Expr P2) throws Exception {
+        Var y = numVar(0.0, 1.0, name);
+        addIF_Only(name, y, P1, P2);
+        return y;
+    }
+    public final void addAnd(String name, Expr y, Expr P1, Expr P2) throws Exception {
+//        add_00_0(name, y, P1, P2);
+//        add_01_0(name, y, P1, P2);
+//        add_10_0(name, y, P1, P2);
+//        add_11_1(name, y, P1, P2);
+        if(name!=null){
+            addGe(y, sum(-1, prod(+1,P1), prod(+1,P2)), name+":00_1");
+            addLe(y, P1,                                name+":10_1");
+            addLe(y, P2,                                name+":01_1");
+        }else{
+            addGe(y, sum(-1, prod(+1,P1), prod(+1,P2)));
+            addLe(y, P1);
+            addLe(y, P2);
+        }
+    }
+    public final Var and(Expr... Pi) throws Exception {
+        return and(null, Pi);
+    }
+    public final Var and(String name, Expr... Pi) throws Exception {
+        Var y = numVar(0.0, 1.0, name);
+        addAnd(name, y, Pi);
+        return y;
+    }
+    public final void addAnd(String name, Expr y, Expr... Pi) throws Exception {
+        if(name!=null){
+            addGe(y, sum(1-Pi.length, sum(Pi)), name+":Tand_1");
+            for(int i=0; i<Pi.length; i++){
+                addLe(y, Pi[i], name+":Tand_0");
+            }
+        }else{
+            addGe(y, sum(1-Pi.length, sum(Pi)));
+            for(int i=0; i<Pi.length; i++){
+                addLe(y, Pi[i]);
+            }
+        }
+    }
+    public final void addOr(String name, Expr y, Expr P1, Expr P2) throws Exception {
+//        add_00_0(name, y, P1, P2);
+//        add_01_1(name, y, P1, P2);
+//        add_10_1(name, y, P1, P2);
+//        add_11_1(name, y, P1, P2);
+        if(name!=null){
+            addLe(y, sum(prod(+1,P1), prod(+1,P2)), name+":00_1");
+            addGe(y, P1,                            name+":10_1");
+            addGe(y, P2,                            name+":01_1");
+        }else{
+            addLe(y, sum(prod(+1,P1), prod(+1,P2)));
+            addGe(y, P1);
+            addGe(y, P2);
+        }
+    }
+    public final Var or(Expr... Pi) throws Exception {
+        return or(null, Pi);
+    }
+    public final Var or(String name, Expr... Pi) throws Exception {
+        Var y = numVar(0.0, 1.0, name);
+        addOr(name, y, Pi);
+        return y;
+    }
+    public final void addOr(String name, Var y, Expr... Pi) throws Exception {
+        if(name!=null){
+            addLe(y, sum(Pi), name+":Tor_1");
+            for(int i=0; i<Pi.length; i++){
+                addGe(y, Pi[i], name+":Tor_0");
+            }
+        }else{
+            addLe(y, sum(Pi));
+            for(int i=0; i<Pi.length; i++){
+                addGe(y, Pi[i]);
+            }
+        }
+    }
+    
+    public final void addXOr(String name, Expr y, Expr P1, Expr P2) throws Exception {
+        add_00_0(name, y, P1, P2);
+        add_01_1(name, y, P1, P2);
+        add_10_1(name, y, P1, P2);
+        add_11_0(name, y, P1, P2);
+    }
+    public final void addIF_Then(String name, Expr y, Expr P1, Expr P2) throws Exception {
+        add_00_1(name, y, P1, P2);
+        add_01_1(name, y, P1, P2);
+        add_10_0(name, y, P1, P2);
+        add_11_1(name, y, P1, P2);
+    }
+    public final void addIF_Only(String name, Expr y, Expr P1, Expr P2) throws Exception {
+        add_00_1(name, y, P1, P2);
+        add_01_0(name, y, P1, P2);
+        add_10_0(name, y, P1, P2);
+        add_11_1(name, y, P1, P2);
+    }
+    
+    private final void add_00_0(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addLe(y, sum(p1, p2), name+":00_0");
+        }else{
+            addLe(y, sum(p1, p2));
+        }
+    }
+    private final void add_01_0(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addLe(y, sum(+1, p1, prod(-1,p2)), name+":01_0");
+        }else{
+            addLe(y, sum(+1, p1, prod(-1,p2)));
+        }
+    }
+    private final void add_10_0(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addLe(y, sum(+1, p2, prod(-1,p1)), name+":10_0");
+        }else{
+            addLe(y, sum(+1, p2, prod(-1,p1)));
+        }
+    }
+    private final void add_11_0(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addLe(y, sum(+2, prod(-1,p1), prod(-1,p2)), name+":11_0");
+        }else{
+            addLe(y, sum(+2, prod(-1,p1), prod(-1,p2)));
+        }
+    }
+    private final void add_00_1(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addGe(y, sum(+1, prod(-1,p1), prod(-1,p2)), name+":00_1");
+        }else{
+            addGe(y, sum(+1, prod(-1,p1), prod(-1,p2)));
+        }
+    }
+    private final void add_01_1(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addGe(y, sum(prod(-1,p1), prod(+1,p2)), name+":01_1");
+        }else{
+            addGe(y, sum(prod(-1,p1), prod(+1,p2)));
+        }
+    }
+    private final void add_10_1(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addGe(y, sum(prod(+1,p1), prod(-1,p2)), name+":10_1");
+        }else{
+            addGe(y, sum(prod(+1,p1), prod(-1,p2)));
+        }
+    }
+    private final void add_11_1(String name, Expr y, Expr p1, Expr p2) throws Exception {
+        if(name!=null){
+            addGe(y, sum(-1, prod(+1,p1), prod(+1,p2)), name+":00_1");
+        }else{
+            addGe(y, sum(-1, prod(+1,p1), prod(+1,p2)));
+        }
+    } 
+    
+    
+    
+    /**
+     * <b>If</b> y = 1 <b>then</b> Zi = 1 for all (i);
+     * @param name
+     * @param y
+     * @param Zi
+     * @throws Exception 
+     */
+    public final void addIF_Y_Them_Zi(String name, Expr y, Expr ...Zi) throws Exception {
+        for(Expr z : Zi){
+            addLe(y, z, name);    
+        }
+    }
+    
+    /**
+     * <b>If</b> y = 1 <b>then</b> constraints &le 0;
+     * @param name
+     * @param y
+     * @param constraints
+     * @throws Exception 
+     */
+    public final void addIF_Y_Them_Le(String name, Expr y, Expr ...constraints) throws Exception {
+        for(Expr exp : constraints){
+            //addLe(exp, sum(bigM-epsilon, prod(-bigM, y)), name);    //Ax - b <= M(1-y) - e  || (M-e) - My
+            addLe(exp, sum(bigM, prod(-bigM, y)), name);    //Ax - b <= M(1-y)  || M - My
+        }
+    }
+    /**
+     * <b>If</b> y = 1 <b>then</b> constraints &ge 0;
+     * @param name
+     * @param y
+     * @param constraints
+     * @throws Exception 
+     */
+    public final void addIF_Y_Them_Ge(String name, Expr y, Expr ...constraints) throws Exception {
+        for(Expr exp : constraints){
+            //addGe(exp, sum(epsilon-bigM, prod(+bigM, y)), name);    //Ax - b >= M(y-1) + e  || (e-M) + My
+            addGe(exp, sum(-bigM, prod(+bigM, y)), name);    //Ax - b >= M(y-1)  || -M + My
+        }
+    }
+    /**
+     * <b>If</b> y = 1 <b>then</b> constraints = 0;
+     * @param name
+     * @param y
+     * @param constraints
+     * @throws Exception 
+     */
+    public final void addIF_Y_Them_Eq(String name, Expr y, Expr ...constraints) throws Exception {
+        //Ax - b <= M(1-y)+e
+        //b - Ax <= M(1-y)+e
+        for(Expr exp : constraints){
+            addLe(exp, sum(+bigM+epsilon, prod(-bigM, y)), name);    //Ax - b <= M(1-y) + e  || +(M+e) - My
+            addGe(exp, sum(-bigM-epsilon, prod(+bigM, y)), name);    //Ax - b >= M(y-1) - e  || -(M+e) + My
+        }
+    }
+    
+    /**
+     * <b>If</b> y = 1 <b>then</b> <i>constraints</i> = 0;
+     * @param name
+     * @param LB is the minimum possible value for <i>constraints</i>
+     * @param UB is the maximum possible value for <i>constraints</i>
+     * @param epsilon a small possitive value, sujestion 1e-4
+     * @param y is a binary proposition
+     * @param constraints is set of expression
+     * @throws Exception 
+     */
+    public final void addIF_Y_Them_Eq(String name, final double LB, final double UB, final double epsilon, Expr y, Expr ...constraints) throws Exception {
+        //Ax - b <= UB*(1-y)+e
+        //Ax - b >= LB*(1-y)-e
+        for(Expr exp : constraints){
+            addLe(exp, sum(+UB+epsilon, prod(-UB, y)), name);    //Ax - b <= UB*(1-y) + e  || +(UB+e) - UB*y
+            addGe(exp, sum(+LB-epsilon, prod(-LB, y)), name);    //Ax - b >= LB*(1-y) - e  || +(LB-e) - LB*y
+        }
+    }
+    
+    /**
+     * <b>If</b> y = 1 <b>then</b> exp1 &le q &le exp2;
+     * @param name
+     * @param y
+     * @param exp1
+     * @param q
+     * @param exp2
+     * @throws Exception 
+     */
+    public void addIF_Y_Them_Between(String name, Expr y, Expr exp1, double q, Expr exp2) throws Exception {
+        addIF_Y_Them_Le(name, y, sum(-q, exp1));
+        addIF_Y_Them_Ge(name, y, sum(-q, exp2));
+    }
+    /**
+     * <b>If</b> y = 1 <b>then</b> lb &le exp &le ub;
+     * <br><br><b>Complexity (B,C,R):</b>  (-, -, 2)    <br>
+     * <pre>
+     * This call add two new restrictions to the model:
+     * 
+     *      exp &le ub + M(1-y)
+     *      exp &ge lb + M(y-1)
+     * 
+     * where M is a big positive value
+     * </pre>
+     *
+     * @param name
+     * @param y
+     * @param lb
+     * @param exp
+     * @param ub
+     * @throws Exception 
+     */
+    public void addIF_Y_Them_Between(String name, Expr y, double lb, Expr exp, double ub) throws Exception {
+        addIF_Y_Them_Le(name, y, sum(-ub, exp));
+        addIF_Y_Them_Ge(name, y, sum(-lb, exp));
+    }
+    
+    /**
+     * <b>If</b> y = 1 <b>then</b> z = w;
+     * @param name
+     * @param y is a binary proposition
+     * @param z is a binary proposition
+     * @param w is a binary proposition
+     * @throws Exception 
+     */
+    public final void addIF_Y_Them_Z_Eq_W(String name, Expr y, Expr z, Expr w) throws Exception {
+        addIF_Y_Them_Eq(name, -1, +1, epsilon, y, sum(z, prod(-1, w)));
+    }
+    /**
+     * <b>If</b> y = 1 <b>then</b> z = value;
+     * @param name
+     * @param y is a proposition variable
+     * @param z is a proposition variable
+     * @param value is a parameter value {true or false}
+     * @throws Exception 
+     */
+    public final void addIF_Y_Them_Z_Eq_W(String name, Expr y, Expr z, final boolean value) throws Exception {
+        if(value){
+            addGe(z, y, name);
+        }else{
+            addLe(sum(z, y), constant(1), name);
+        }
+    }
+    
+    /**
+     * <b>Attention, requires the creation of new binary variables for each constraint</b><br>
+     * <b>If</b> constraints &le 0 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param constraints
+     * @throws Exception 
+     */
+    public final void addIF_Le_Them_Y(String name, Expr y, Expr ...constraints) throws Exception {
+        Var zi[] = boolVarArray(range(constraints.length), "z");
+        for(int i=0; i<constraints.length; i++){
+            addIF_Le_Them_Y(name+"["+i+"]", zi[i], constraints[i]);
+        }
+        addAnd(name+".and", y, zi);
+    }
+    /**
+     * <b>If</b> constraint &le 0 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param constraint
+     * @throws Exception 
+     */
+    public final void addIF_Le_Them_Y(String name, Expr y, Expr constraint) throws Exception {
+        addGe(constraint, sum(+epsilon, prod(-bigM, y)), name);    //Ax - b >= e - My
+    }
+    /**
+     * <b>If</b> constraint &lt 0 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param constraint
+     * @throws Exception 
+     */
+    public final void addIF_Lt_Them_Y(String name, Expr y, Expr constraint) throws Exception {       
+        addGe(constraint, prod(-bigM, y), name);    //Ax < b --> y     |    Ax - b >= - My
+    }
+    /**
+     * <b>If</b> constraint &ge 0 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param constraint
+     * @throws Exception 
+     */
+    public final void addIF_Ge_Them_Y(String name, Expr y, Expr constraint) throws Exception {
+        addLe(constraint, sum(-epsilon, prod(+bigM, y)), name);    //Ax - b <= -e + My
+    }
+    /**
+     * <b>If</b> constraint &gt 0 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param constraint
+     * @throws Exception 
+     */
+    public final void addIF_Gt_Them_Y(String name, Expr y, Expr constraint) throws Exception {
+        addLe(constraint, prod(+bigM, y), name);    //Ax > b --> y     |    Ax - b <= My
+    }
+
+    /**
+     * <b>Attention, requires the creation of new binary variables for each constraint</b><br>
+     * <b>If</b> constraints &le 0 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param constraints
+     * @throws Exception 
+     */
+    public final void addIF_Eq_Them_Y(String name, Expr y, Expr ...constraints) throws Exception {
+        Expr exp[] = new Expr[2*constraints.length];
+        for(int i=0; i<constraints.length; i++){
+            exp[2*i] = constraints[i];
+            exp[2*i+1] = prod(-1,constraints[i]);
+        }
+        addIF_Le_Them_Y(name, y, exp);
+    }
+    public final void addIF_Eq_Them_Y(String name, Expr y, Expr exp) throws Exception {
+        Var z = boolVar("z");
+        Var w = boolVar("w");
+        addIF_Le_Them_Y(name, z, exp);
+        addIF_Ge_Them_Y(name, w, exp);
+        addAnd(name+".and", y, z, w);
+    }
+
+    /**
+     * <b>If</b> exp1 &le q &le exp2 <b>then</b> y = 1;
+     * @param name
+     * @param exp1
+     * @param q
+     * @param exp2
+     * @return y
+     * @throws Exception 
+     */
+    public Var IF_Between_Them_Y(String name, Expr exp1, double q, Expr exp2) throws Exception {
+        Var y = numVar(0, 1, name+".y");
+        addIF_Between_Them_Y(name, y, exp1, q, exp2);
+        return y;
+    }
+    /**
+     * <b>If</b> exp1 &le q &le exp2 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param exp1
+     * @param q
+     * @param exp2
+     * @throws Exception 
+     */
+    public void addIF_Between_Them_Y(String name, Expr y, Expr exp1, double q, Expr exp2) throws Exception {
+        Var z = boolVar("z");
+        Var w = boolVar("w");
+        addIF_Le_Them_Y(name, z, sum(-q, exp1));
+        addIF_Ge_Them_Y(name, w, sum(-q, exp2));
+        addAnd(name+".and", y, z, w);
+    }
+    /**
+     * <b>If</b> exp1 &le q &lt exp2 <b>then</b> y = 1;
+     * @param name
+     * @param exp1
+     * @param q
+     * @param exp2
+     * @return y
+     * @throws Exception 
+     */
+    public Var IF_BetweenLT_Them_Y(String name, Expr exp1, double q, Expr exp2) throws Exception {
+        Var y = numVar(0, 1, name+".y");
+        addIF_BetweenLT_Them_Y(name, y, exp1, q, exp2);
+        return y;
+    }
+    /**
+     * <b>If</b> exp1 &le q &lt exp2 <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param exp1
+     * @param q
+     * @param exp2
+     * @throws Exception 
+     */
+    public void addIF_BetweenLT_Them_Y(String name, Expr y, Expr exp1, double q, Expr exp2) throws Exception {
+        Var z = boolVar("z");
+        Var w = boolVar("w");
+        addIF_Le_Them_Y(name, z, sum(-q, exp1));
+        addIF_Ge_Them_Y(name, w, sum(-q-epsilon, exp2));
+        addAnd(name+".and", y, z, w);
+    }
+    /**
+     * <b>If</b> lb &le exp &le ub <b>then</b> y = 1;
+     * @param name
+     * @param lb
+     * @param exp
+     * @param ub
+     * @return y
+     * @throws Exception 
+     */
+    public Var IF_Between_Them_Y(String name, double lb, Expr exp, double ub) throws Exception {
+        Var y = numVar(0, 1, name+".y");
+        addIF_Between_Them_Y(name, y, lb, exp, ub);
+        return y;
+    }
+    /**
+     * <b>If</b> lb &le exp &le ub <b>then</b> y = 1;
+     * @param name
+     * @param y
+     * @param lb
+     * @param exp
+     * @param ub
+     * @throws Exception 
+     */
+    public void addIF_Between_Them_Y(String name, Expr y, double lb, Expr exp, double ub) throws Exception {
+        Var z = boolVar("z");
+        Var w = boolVar("w");
+        addIF_Le_Them_Y(name, z, sum(-ub, exp));
+        addIF_Ge_Them_Y(name, w, sum(-lb, exp));
+        addAnd(name+".and", y, z, w);
+    }
+    
 }

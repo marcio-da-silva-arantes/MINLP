@@ -23,10 +23,10 @@ public class CPLEX extends MINLP{
     
     public final IloCplex mip;
     public CPLEX() throws Exception {
-        this(1e5);
+        this(1e5, 1e-4);
     }
-    public CPLEX(double bigM) throws Exception {
-        super(bigM);
+    public CPLEX(double bigM, double epsilon) throws Exception {
+        super(bigM, epsilon);
         mip = new IloCplex();
         map = new TreeMap();
     }

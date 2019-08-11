@@ -27,10 +27,10 @@ public class Gurobi extends MINLP{
     public final GRBModel mip;
     
     public Gurobi() throws Exception {
-        this(1e5);
+        this(1e5, 1e-4);
     }
-    public Gurobi(double bigM) throws Exception {
-        super(bigM);
+    public Gurobi(double bigM, double epsilon) throws Exception {
+        super(bigM, epsilon);
         env = new GRBEnv();
         mip = new GRBModel(env);
         map = new TreeMap();

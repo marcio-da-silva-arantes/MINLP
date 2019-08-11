@@ -30,10 +30,10 @@ public class GLPK extends MINLP{
     private boolean isLP = true; //if has any integer or binary variable this will change to false
     
     public GLPK() throws Exception {
-        this(1e5);
+        this(1e5, 1e-4);
     }
-    public GLPK(double bigM) throws Exception {
-        super(bigM);
+    public GLPK(double bigM, double epsilon) throws Exception {
+        super(bigM, epsilon);
         mip = glp_create_prob();
         parm_smcp = new glp_smcp();
         parm_iocp = new glp_iocp();
