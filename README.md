@@ -1,17 +1,36 @@
 # MINLP
 
 * **Version:** [v2.3.3](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar)
-* **Date:** 26/05/2019
+* **Last update:** 26/05/2019
 
-Imagine that, a easy way to solve the non-linear problems like below, all this using standard linear programming solvers.
+Imagine that, a easy way to solve optimally non-linear problems like below, all this using standard linear programming solvers.
 <pre>
-<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" title="\begin{matrix} minimize & x^7 - 7x^3 + 3^2 - \sqrt{2x+1}\\ subject\ to & x \in [0, 2] \end{matrix}" /></a>
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3x^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;minimize&space;&&space;x^7&space;-&space;7x^3&space;&plus;&space;3x^2&space;-&space;\sqrt{2x&plus;1}\\&space;subject\&space;to&space;&&space;x&space;\in&space;[0,&space;2]&space;\end{matrix}" title="\begin{matrix} minimize & x^7 - 7x^3 + 3x^2 - \sqrt{2x+1}\\ subject\ to & x \in [0, 2] \end{matrix}" /></a>
 </pre>
 
-The MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way. MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. You can easy donwload the last version here: [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar).
-This library encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
+The MINLP proposes make linear transformations to solve this for you, and creates abstractions to do in a easy and transparent way. MINLP is a high level abstraction to encode Mixed Integer Nonlinear Programming (MINLP) models in Java. Some ways to use MINLP.
+
+
+* **Frist time:** 
+	1. Create a new Java project using some IDE (I suggest to use [NetBeans 8.2](https://netbeans.org/downloads/8.2/))
+	2. Download and import [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar) in your project.
+	3. Download and install one of the solvers supported, then import the java (.jar) lib in your project (I suggest Glpk, here a easy link for [windows](https://sourceforge.net/projects/winglpk/files/latest/download) or [linux](http://ftp.gnu.org/gnu/glpk/) users).
+	4. Make your on models, see the [samples](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples) on MINLP
+	
+* **For Developers:**
+	1. Download or clone this repository
+	2. Open this project using [NetBeans 8.2](https://netbeans.org/downloads/8.2/) IDE
+	3. Download and install one of the solvers supported, then import the java (.jar) lib in your project.
+	4. Make all modifications you need, code new [samples](https://github.com/marcio-da-silva-arantes/MINLP/tree/master/MINLP/src/minlp/samples), be happy.
+	
+* **Updates to new versions:**
+	1. If you already has MINLP you can easy donwload the last version here [MINLP.jar](https://github.com/marcio-da-silva-arantes/MINLP/raw/master/MINLP/dist/MINLP.jar) and replace it on your project.
+
+MINLP is a library thats encode the models using the folowing suported solvers Cplex, Glpk and Gurobi, then you need to install the ones you intend to use, see how to install this dependencies on links below:
 * [Cplex](https://www.ibm.com/br-pt/marketplace/ibm-ilog-cplex) (proprietary)
 * [Glpk](https://www.gnu.org/software/glpk/) (free)
+	* [Windows](http://winglpk.sourceforge.net/)
+	* [Linux](https://www.gnu.org/software/glpk/)
 * [Gurobi](http://www.gurobi.com/) (proprietary)
 
 #### Main idea of how some simple linear transformations are done by MINLP
